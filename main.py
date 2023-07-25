@@ -1,77 +1,81 @@
 import pygame
 
-from sprites import Player
+from sprites import Character
+from variable import VariableXY, VariableLR
 
 pygame.init()
 
 
-width = 640
-height = 480
-SCREEN = pygame.display.set_mode((width, height))
-bg = pygame.image.load("./resources/images/background/background.png")
-player_img = pygame.image.load("./resources/images/character/player.png")
-player_x = 320
-player_y = 240
+size = VariableXY(640, 480)
+player = VariableXY(
+    320, 240, pygame.image.load("./resources/images/character/player.png")
+)
+player.sprite = Character(player.img)
+key_down = VariableLR(False, False)
+boundary = VariableLR(233, 614)
+
+background = pygame.image.load("./resources/images/background/background.png")
+SCREEN = pygame.display.set_mode((size.x, size.y))
 CLOCK = pygame.time.Clock()
-RUNNING = True
-i = 0
 all_sprites = pygame.sprite.Group()
-player = Player(player_img)
+RUNNING = True
 speed = 0.2
-left_down = False
-right_down = False
-bound_left = 233
-bound_right = 614
-left_start = 0
-right_start = 0
-player.update((player_x, player_y))
-all_sprites.add(player)
+
+player.sprite.update((player.x, player.y))
+all_sprites.add(player.sprite)
 
 
 def move_background():
-    global i
+    i = 0
     # 참고: https://www.askpython.com/python-modules/pygame-looping-background
-    SCREEN.blit(bg, (0, i))
-    SCREEN.blit(bg, (0, height + i))
-    if i <= -height + 1:
+    SCREEN.blit(background, (0, i))
+    SCREEN.blit(background, (0, size.y + i))
+    if i <= -size.y + 1:
         i = 0
     # 속도
     i -= 0.2 * dt
 
 
+def input_manager(event):
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_LEFT:
+            if boundary.left < player.x - 21:
+                player.x -= speed * 3 * dt
+                key_down.left = True
+
+        if event.key == pygame.K_RIGHT:
+            if player.x + 21 < boundary.right:
+                player.x += speed * 3 * dt
+                key_down.right = True
+
+    if event.type == pygame.KEYUP:
+        if event.key == pygame.K_LEFT:
+            key_down.left = False
+        if event.key == pygame.K_RIGHT:
+            key_down.right = False
+
+
 while RUNNING:
     dt = CLOCK.tick(60)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             RUNNING = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                if bound_left < player_x - 21:
-                    player_x -= speed * 3 * dt
-                    left_down = True
-            if event.key == pygame.K_RIGHT:
-                if player_x + 21 < bound_right:
-                    player_x += speed * 3 * dt
-                    right_down = True
+        input_manager(event)
 
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                left_down = False
-            if event.key == pygame.K_RIGHT:
-                right_down = False
+    if key_down.left:
+        player.x -= speed * dt
+    if key_down.right:
+        player.x += speed * dt
 
-    if left_down:
-        player_x -= speed * dt
-    if right_down:
-        player_x += speed * dt
-    if player_x - 21 <= bound_left:
-        left_down = False
-    if bound_right <= player_x + 21:
-        right_down = False
+    if player.x - 21 <= boundary.left:
+        key_down.left = False
+    if boundary.right <= player.x + 21:
+        key_down.right = False
 
     move_background()
-    print(player_x, player_y)
-    player.update((player_x, player_y))
+
+    player.sprite.update((player.x, player.y))
     all_sprites.draw(SCREEN)
 
     pygame.display.update()
