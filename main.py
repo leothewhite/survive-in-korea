@@ -39,12 +39,12 @@ def move_background():
 def input_manager(event):
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_LEFT:
-            if boundary.left < player.x - 21:
+            if boundary.left < player.x:
                 player.x -= speed * 3 * dt
                 key_down.left = True
 
         if event.key == pygame.K_RIGHT:
-            if player.x + 21 < boundary.right:
+            if player.x + 40 < boundary.right:
                 player.x += speed * 3 * dt
                 key_down.right = True
 
@@ -68,9 +68,9 @@ while RUNNING:
     if key_down.right:
         player.x += speed * dt
 
-    if player.x - 21 <= boundary.left:
+    if player.x <= boundary.left:
         key_down.left = False
-    if boundary.right <= player.x + 21:
+    if boundary.right <= player.x + 40:
         key_down.right = False
 
     move_background()
