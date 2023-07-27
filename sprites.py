@@ -21,3 +21,7 @@ class Border(pygame.sprite.Sprite):
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
+
+    def update(self, pos):
+        self.rect = self.image.get_rect()
+        self.rect.topleft = pos
