@@ -1,6 +1,6 @@
 import pygame
 
-from sprites import Character
+from sprites import Character, Border
 from variable import VariableXY, VariableLR
 
 pygame.init()
@@ -14,19 +14,39 @@ player.sprite = Character(player.img)
 key_down = VariableLR(False, False)
 boundary = VariableLR(233, 614)
 
+
 background = pygame.image.load("./resources/images/background/background.png")
 SCREEN = pygame.display.set_mode((size.x, size.y))
 CLOCK = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
 RUNNING = True
 speed = 0.2
+borders_left = []
+borders_right = []
+for i in range(16):
+    now_y = i * 40
+    border_left = VariableXY(
+        214, now_y, pygame.image.load("./resources/images/object/border.png")
+    )
+    border_left.sprite = Border(border_left.img, (border_left.x, border_left.y))
+    borders_left.append(border_left.sprite)
+    all_sprites.add(border_left.sprite)
+
+    border_right = VariableXY(
+        614, now_y, pygame.image.load("./resources/images/object/border.png")
+    )
+    border_right.sprite = Border(border_right.img, (border_right.x, border_right.y))
+    borders_right.append(border_right.sprite)
+    all_sprites.add(border_right.sprite)
 
 player.sprite.update((player.x, player.y))
 all_sprites.add(player.sprite)
 
+i = 0
+
 
 def move_background():
-    i = 0
+    global i
     # 참고: https://www.askpython.com/python-modules/pygame-looping-background
     SCREEN.blit(background, (0, i))
     SCREEN.blit(background, (0, size.y + i))
