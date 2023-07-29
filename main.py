@@ -1,4 +1,5 @@
 import pygame
+from copy import deepcopy
 
 from sprites import Character, Border
 from variable import VariableXY, VariableLR
@@ -21,18 +22,20 @@ CLOCK = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
 RUNNING = True
 speed = 0.2
-borders_left = []
-borders_right = []
+borders = [[], [], [], []]
+border_img = pygame.image.load("./resources/images/object/border.png")
 
-for i in range(16):
+for i in range(32):
     now_y = i * 40
-    border_img = pygame.image.load("./resources/images/object/border.png")
-    l = Border(border_img, (214, now_y))
-    r = Border(border_img, (614, now_y))
-    borders_left.append(l)
-    borders_right.append(r)
-    all_sprites.add(l)
-    all_sprites.add(r)
+    block = [
+        Border(border_img, (214, now_y)),
+        Border(border_img, (214, size.y + now_y)),
+        Border(border_img, (614, now_y)),
+        Border(border_img, (614, size.y + now_y)),
+    ]
+    for i in range(4):
+        borders[i].append(block[i])
+        all_sprites.add(block[i])
 
 player.sprite.update((player.x, player.y))
 all_sprites.add(player.sprite)
@@ -42,9 +45,13 @@ i = 0
 
 def move_background():
     global i
-    # 참고: https://www.askpython.com/python-modules/pygame-looping-background
     SCREEN.blit(background, (0, i))
     SCREEN.blit(background, (0, size.y + i))
+    for idx in range(32):
+        for t in range(4):
+            now = borders[t][idx]
+            now.update((now.rect.x, i + idx * 40))
+
     if i <= -size.y + 1:
         i = 0
     # 속도
@@ -84,10 +91,16 @@ while RUNNING:
 
     move_background()
 
-    if pygame.Rect.collidelist(player.sprite.rect, borders_left) != -1:
+    if (
+        pygame.Rect.collidelist(player.sprite.rect, borders[0]) != -1
+        or pygame.Rect.collidelist(player.sprite.rect, borders[1]) != -1
+    ):
         if to_x < 0:
             to_x = 0
-    elif pygame.Rect.collidelist(player.sprite.rect, borders_right) != -1:
+    elif (
+        pygame.Rect.collidelist(player.sprite.rect, borders[2]) != -1
+        or pygame.Rect.collidelist(player.sprite.rect, borders[3]) != -1
+    ):
         if 0 < to_x:
             to_x = 0
     player.x += to_x
