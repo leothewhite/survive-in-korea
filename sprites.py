@@ -28,12 +28,16 @@ class Border(pygame.sprite.Sprite):
 
 
 class Place(pygame.sprite.Sprite):
-    def __init__(self, img, pos):
+    def __init__(self, img, name, pos):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
+        self.name = name
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
 
     def update(self, pos):
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)

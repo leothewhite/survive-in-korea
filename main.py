@@ -1,7 +1,8 @@
 import pygame
 import os
+import random
 
-from sprites import Character, Border
+from sprites import *
 from variable import VariableXY, VariableLR
 
 pygame.init()
@@ -38,38 +39,52 @@ for i in range(32):
         all_sprites.add(block[i])
 
 place_path = "./resources/images/place/"
-place_list = os.listdir(place_path)
+place_image_list = os.listdir(place_path)
+place_list = [[], [], []]
 
-for i, v in enumerate(place_list):
-    place_list[i] = pygame.image.load(place_path + v)
+for i, v in enumerate(place_image_list):
+    file_name = v.split(".")[0]
+    # a: 스트레스 해소, 0번 인덱스, b: 공부, 1번 인덱스, c: 진로, 2번 인덱스
+    place_list[ord(v[0]) - 97].append(
+        Place(pygame.image.load(place_path + v), file_name[2:], (33, size.y))
+    )
 
+place_list_now = [-1, -1, -1]
+place_idx = 3
 
 player.sprite.update((player.x, player.y))
 all_sprites.add(player.sprite)
 
-i = 0
+bg_y = 0
 
 
 def move_background():
-    global i
-    SCREEN.blit(background, (0, i))
-    SCREEN.blit(background, (0, 640 + i))
+    global bg_y, place_idx
+    SCREEN.blit(background, (0, bg_y))
+    SCREEN.blit(background, (0, 640 + bg_y))
     for idx in range(32):
         if 12 <= idx <= 16:
-            place_list
-            now = borders[2][idx]
-            now.update((now.rect.x, i + idx * 40))
-            now = borders[3][idx]
-            now.update((now.rect.x, i + idx * 40))
+            if 2 < place_idx:
+                for i in range(3):
+                    place_list_now[i] = random.choice(place_list[i])
+                random.shuffle(place_list)
+                place_idx = 0
+            place_list_now[place_idx].update((33, bg_y + size.y))
+            place_list_now[place_idx].draw(SCREEN)
+            for t in range(2, 4):
+                now = borders[t][idx]
+                now.update((now.rect.x, bg_y + idx * 40))
         else:
             for t in range(4):
                 now = borders[t][idx]
-                now.update((now.rect.x, i + idx * 40))
+                now.update((now.rect.x, bg_y + idx * 40))
 
-    if i <= -size.y - 160:
-        i = 0
+    if bg_y <= -size.y - 200:
+        place_idx += 1
+        bg_y = 0
+
     # 속도
-    i -= 0.15 * dt
+    bg_y -= 0.15 * dt
 
 
 def input_manager(event):
