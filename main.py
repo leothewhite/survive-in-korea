@@ -46,16 +46,22 @@ i = 0
 def move_background():
     global i
     SCREEN.blit(background, (0, i))
-    SCREEN.blit(background, (0, size.y + i))
+    SCREEN.blit(background, (0, 640 + i))
     for idx in range(32):
-        for t in range(4):
-            now = borders[t][idx]
+        if 12 <= idx < 16:
+            now = borders[2][idx]
             now.update((now.rect.x, i + idx * 40))
+            now = borders[3][idx]
+            now.update((now.rect.x, i + idx * 40))
+        else:
+            for t in range(4):
+                now = borders[t][idx]
+                now.update((now.rect.x, i + idx * 40))
 
-    if i <= -size.y + 1:
+    if i <= -size.y - 160:
         i = 0
     # 속도
-    i -= 0.2 * dt
+    i -= 0.15 * dt
 
 
 def input_manager(event):
