@@ -1,5 +1,5 @@
 import pygame
-from copy import deepcopy
+import os
 
 from sprites import Character, Border
 from variable import VariableXY, VariableLR
@@ -23,7 +23,7 @@ all_sprites = pygame.sprite.Group()
 RUNNING = True
 speed = 0.2
 borders = [[], [], [], []]
-border_img = pygame.image.load("./resources/images/object/border.png")
+border_img = pygame.image.load("./resources/images/background/border.png")
 
 for i in range(32):
     now_y = i * 40
@@ -37,6 +37,13 @@ for i in range(32):
         borders[i].append(block[i])
         all_sprites.add(block[i])
 
+place_path = "./resources/images/place/"
+place_list = os.listdir(place_path)
+
+for i, v in enumerate(place_list):
+    place_list[i] = pygame.image.load(place_path + v)
+
+
 player.sprite.update((player.x, player.y))
 all_sprites.add(player.sprite)
 
@@ -48,7 +55,8 @@ def move_background():
     SCREEN.blit(background, (0, i))
     SCREEN.blit(background, (0, 640 + i))
     for idx in range(32):
-        if 12 <= idx < 16:
+        if 12 <= idx <= 16:
+            place_list
             now = borders[2][idx]
             now.update((now.rect.x, i + idx * 40))
             now = borders[3][idx]
