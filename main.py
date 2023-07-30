@@ -1,7 +1,6 @@
 import pygame
 import os
 import random
-import manager
 
 from sprites import *
 
@@ -54,7 +53,6 @@ for i in range(32):
 for i, v in enumerate(images["place"]):
     file_name = v[0]
     file = v[1]
-    # a: 스트레스 해소, 0번 인덱스, b: 공부, 1번 인덱스, c: 진로, 2번 인덱스
     place_list[v[0][0]].append(Place(file, file_name[2:], (33, size_y)))
 
 
@@ -141,11 +139,8 @@ while RUNNING:
         if 0 < to_x:
             to_x = 0
 
-    SCREEN.blit(images["background"], (0, bg_y))
-    SCREEN.blit(images["background"], (0, 640 + bg_y))
     player_x += to_x
     player.update((player_x, 240))
-    place_now_set[place_idx].draw(SCREEN)
     all_sprites.draw(SCREEN)
     to_x = 0
 
