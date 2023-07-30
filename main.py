@@ -1,6 +1,7 @@
 import pygame
 import os
 import random
+import manager
 
 from sprites import *
 
@@ -54,7 +55,7 @@ for idx, file in enumerate(images["place"]):
     places[file[0][0]].append(Place(file[1], file[0][2:], (33, 480)))
 
 
-place_now = [-1, -1, -1]
+place_now_set = [-1, -1, -1]
 place_idx = 3
 
 player.update((player_x, 240))
@@ -63,8 +64,7 @@ all_sprites.add(player)
 bg_y = 0
 
 
-def background_manager():
-    global bg_y, place_idx
+def background_manager(bg_y, place_idx):
     SCREEN.blit(images["background"], (0, bg_y))
     SCREEN.blit(images["background"], (0, 640 + bg_y))
 
@@ -72,12 +72,11 @@ def background_manager():
         if 12 <= idx <= 16:
             if 2 < place_idx:
                 for i in range(3):
-                    place_now[i] = random.choice(places[chr(i + 97)])
-                random.shuffle(place_now)
+                    place_now_set[i] = random.choice(places[chr(i + 97)])
+                random.shuffle(place_now_set)
                 place_idx = 0
-
-            place_now[place_idx].update((33, bg_y + 480))
-            place_now[place_idx].draw(SCREEN)
+            place_now = place_now_set[place_idx]
+            place_now.update((33, bg_y + 480))
 
             for t in range(2, 4):
                 now = borders[t][idx]
@@ -92,24 +91,7 @@ def background_manager():
         bg_y = 0
 
     bg_y -= 0.15 * dt
-
-
-def input_manager(event):
-    global to_x, down_left, down_right
-    if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_LEFT:
-            to_x -= speed * 3 * dt
-            down_left = True
-
-        if event.key == pygame.K_RIGHT:
-            to_x += speed * 3 * dt
-            down_right = True
-
-    if event.type == pygame.KEYUP:
-        if event.key == pygame.K_LEFT:
-            down_left = False
-        if event.key == pygame.K_RIGHT:
-            down_right = False
+    return place_now, bg_y, place_idx
 
 
 def collision_manager(a, b):
@@ -125,14 +107,14 @@ while RUNNING:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             RUNNING = False
-        input_manager(event)
+        down_left, down_right, to_x = manager.input_manager(event, dt)
 
     if down_left:
         to_x -= speed * dt
     if down_right:
         to_x += speed * dt
 
-    background_manager()
+    place_now, bg_y, place_idx = background_manager(bg_y, place_idx)
 
     if collision_manager(player.rect, borders[0]) or collision_manager(
         player.rect, borders[1]
@@ -147,6 +129,7 @@ while RUNNING:
 
     player_x += to_x
     player.update((player_x, 240))
+    place_now.draw(SCREEN)
     all_sprites.draw(SCREEN)
     to_x = 0
 
