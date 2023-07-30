@@ -67,6 +67,7 @@ bg_y = 0
 
 def move_background():
     global bg_y, place_idx
+
     SCREEN.blit(images["background"], (0, bg_y))
     SCREEN.blit(images["background"], (0, 640 + bg_y))
     for idx in range(32):
@@ -76,8 +77,6 @@ def move_background():
                     place_now_set[i] = random.choice(place_list[chr(i + 97)])
                 random.shuffle(place_now_set)
                 place_idx = 0
-            place_now_set[place_idx].update((33, bg_y + size_y))
-            place_now_set[place_idx].draw(SCREEN)
             for t in range(2, 4):
                 now = borders[t][idx]
                 now.update((now.rect.x, bg_y + idx * 40))
@@ -85,7 +84,8 @@ def move_background():
             for t in range(4):
                 now = borders[t][idx]
                 now.update((now.rect.x, bg_y + idx * 40))
-
+    place_now_set[place_idx].update((33, bg_y + size_y))
+    place_now_set[place_idx].draw(SCREEN)
     if bg_y <= -size_y - 200:
         place_idx += 1
         bg_y = 0
@@ -120,7 +120,6 @@ def chk_collide(a, b):
 
 while RUNNING:
     dt = CLOCK.tick(60)
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             RUNNING = False
@@ -138,7 +137,6 @@ while RUNNING:
     elif chk_collide(player.rect, borders[2]) or chk_collide(player.rect, borders[3]):
         if 0 < to_x:
             to_x = 0
-
     player_x += to_x
     player.update((player_x, 240))
     all_sprites.draw(SCREEN)
