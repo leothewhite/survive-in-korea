@@ -64,34 +64,31 @@ all_sprites.add(player)
 bg_y = 0
 
 
-def background_manager(bg_y, place_idx):
-    SCREEN.blit(images["background"], (0, bg_y))
-    SCREEN.blit(images["background"], (0, 640 + bg_y))
+# def background_manager(bg_y, place_idx, place_now_set):
+#     for idx in range(32):
+#         if 12 <= idx <= 16:
+#             if 2 < place_idx:
+#                 for i in range(3):
+#                     place_now_set[i] = random.choice(places[chr(i + 97)])
+#                 random.shuffle(place_now_set)
+#                 place_idx = 0
+#             place_now = place_now_set[place_idx]
+#             place_now.update((33, bg_y + 480))
 
-    for idx in range(32):
-        if 12 <= idx <= 16:
-            if 2 < place_idx:
-                for i in range(3):
-                    place_now_set[i] = random.choice(places[chr(i + 97)])
-                random.shuffle(place_now_set)
-                place_idx = 0
-            place_now = place_now_set[place_idx]
-            place_now.update((33, bg_y + 480))
+#             for t in range(2, 4):
+#                 now = borders[t][idx]
+#                 now.update((now.rect.x, bg_y + idx * 40))
+#         else:
+#             for t in range(4):
+#                 now = borders[t][idx]
+#                 now.update((now.rect.x, bg_y + idx * 40))
 
-            for t in range(2, 4):
-                now = borders[t][idx]
-                now.update((now.rect.x, bg_y + idx * 40))
-        else:
-            for t in range(4):
-                now = borders[t][idx]
-                now.update((now.rect.x, bg_y + idx * 40))
+#     if bg_y <= -680:
+#         place_idx += 1
+#         bg_y = 0
 
-    if bg_y <= -680:
-        place_idx += 1
-        bg_y = 0
-
-    bg_y -= 0.15 * dt
-    return place_now, bg_y, place_idx
+#     bg_y -= 0.15 * dt
+#     return place_now, bg_y, place_idx, place_now_set
 
 
 def collision_manager(a, b):
@@ -114,7 +111,9 @@ while RUNNING:
     if down_right:
         to_x += speed * dt
 
-    place_now, bg_y, place_idx = background_manager(bg_y, place_idx)
+    place_now, bg_y, place_idx, place_now_set = manager.background_manager(
+        bg_y, place_idx, place_now_set, places, borders, dt
+    )
 
     if collision_manager(player.rect, borders[0]) or collision_manager(
         player.rect, borders[1]
@@ -127,6 +126,8 @@ while RUNNING:
         if 0 < to_x:
             to_x = 0
 
+    SCREEN.blit(images["background"], (0, bg_y))
+    SCREEN.blit(images["background"], (0, 640 + bg_y))
     player_x += to_x
     player.update((player_x, 240))
     place_now.draw(SCREEN)
