@@ -68,7 +68,7 @@ bg_y = 0
 
 
 def move_background():
-    global bg_y, place_idx
+    global bg_y, place_idx, place_now
 
     SCREEN.blit(images["background"], (0, bg_y))
     SCREEN.blit(images["background"], (0, 640 + bg_y))
@@ -134,7 +134,8 @@ while RUNNING:
 
     move_background()
 
-    to_x -= gravity
+    if place_now.rect.y - 40 <= player.rect.y <= place_now.rect.y + 200:
+        to_x -= gravity
 
     if chk_collide(player.rect, borders[0]) or chk_collide(player.rect, borders[1]):
         if to_x < 0:
