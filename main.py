@@ -77,6 +77,8 @@ def move_background():
                     place_now_set[i] = random.choice(place_list[chr(i + 97)])
                 random.shuffle(place_now_set)
                 place_idx = 0
+            place_now_set[place_idx].update((33, bg_y + size_y))
+            place_now_set[place_idx].draw(SCREEN)
             for t in range(2, 4):
                 now = borders[t][idx]
                 now.update((now.rect.x, bg_y + idx * 40))
@@ -84,8 +86,6 @@ def move_background():
             for t in range(4):
                 now = borders[t][idx]
                 now.update((now.rect.x, bg_y + idx * 40))
-    place_now_set[place_idx].update((33, bg_y + size_y))
-    place_now_set[place_idx].draw(SCREEN)
     if bg_y <= -size_y - 200:
         place_idx += 1
         bg_y = 0
