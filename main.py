@@ -2,7 +2,7 @@ import pygame
 import os
 import random
 
-from sprites import *
+from myclass import *
 
 pygame.init()
 

@@ -38,3 +38,11 @@ class Place(pygame.sprite.Sprite):
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+
+
+class Guage:
+    def __init__(self, stress, grade, future, health):
+        self.stress = stress
+        self.grade = grade
+        self.future = future
+        self.health = health
