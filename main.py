@@ -34,7 +34,7 @@ RUNNING = True
 speed = 0.2
 
 borders = [[], [], [], []]
-place_list = {"a": [], "b": [], "c": []}
+places = {"a": [], "b": [], "c": []}
 
 
 player = Character(images["player"])
@@ -54,7 +54,7 @@ for i in range(32):
 for i, v in enumerate(images["place"]):
     file_name = v[0]
     file = v[1]
-    place_list[v[0][0]].append(Place(file, file_name[2:], (33, size_y)))
+    places[v[0][0]].append(Place(file, file_name[2:], (33, size_y)))
 
 
 place_now_set = [-1, -1, -1]
@@ -75,7 +75,7 @@ def move_background():
         if 12 <= idx <= 16:
             if 2 < place_idx:
                 for i in range(3):
-                    place_now_set[i] = random.choice(place_list[chr(i + 97)])
+                    place_now_set[i] = random.choice(places[chr(i + 97)])
                 random.shuffle(place_now_set)
                 place_idx = 0
             place_now_set[place_idx].update((33, bg_y + size_y))
