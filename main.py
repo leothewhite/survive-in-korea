@@ -58,6 +58,7 @@ for i, v in enumerate(images["place"]):
 
 
 place_now_set = [-1, -1, -1]
+place_now = places["a"][0]
 place_idx = 3
 
 player.update((player_x, 240))
@@ -78,8 +79,9 @@ def move_background():
                     place_now_set[i] = random.choice(places[chr(i + 97)])
                 random.shuffle(place_now_set)
                 place_idx = 0
-            place_now_set[place_idx].update((33, bg_y + size_y))
-            place_now_set[place_idx].draw(SCREEN)
+            place_now = place_now_set[place_idx]
+            place_now.update((33, bg_y + size_y))
+            place_now.draw(SCREEN)
             for t in range(2, 4):
                 now = borders[t][idx]
                 now.update((now.rect.x, bg_y + idx * 40))
