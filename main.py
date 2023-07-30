@@ -10,6 +10,7 @@ pygame.init()
 size_x, size_y = 640, 480
 player_x = 320
 to_x = 0
+gravity = 1
 
 place_path = "./resources/images/place/"
 images = {
@@ -130,6 +131,8 @@ while RUNNING:
         to_x += speed * dt
 
     move_background()
+
+    to_x -= gravity
 
     if chk_collide(player.rect, borders[0]) or chk_collide(player.rect, borders[1]):
         if to_x < 0:
