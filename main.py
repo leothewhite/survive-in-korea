@@ -120,6 +120,12 @@ def chk_collide(a, b):
     return pygame.Rect.collidelist(a, b) + 1
 
 
+def place_collide(player, place_type):
+    col = chk_collide(player.rect, places[place_type])
+    if col:
+        print(places[place_type][col - 1].name)
+
+
 while RUNNING:
     dt = CLOCK.tick(60)
     for event in pygame.event.get():
@@ -142,17 +148,9 @@ while RUNNING:
     elif chk_collide(player.rect, borders[2]) or chk_collide(player.rect, borders[3]):
         if 0 < to_x:
             to_x = 0
-    col = chk_collide(player.rect, places["a"])
-    if col:
-        print(places["a"][col - 1].name)
-
-    col = chk_collide(player.rect, places["b"])
-    if col:
-        print(places["b"][col - 1].name)
-
-    col = chk_collide(player.rect, places["c"])
-    if col:
-        print(places["c"][col - 1].name)
+    place_collide(player, "a")
+    place_collide(player, "b")
+    place_collide(player, "c")
 
     player_x += to_x
     player.update((player_x, 240))
