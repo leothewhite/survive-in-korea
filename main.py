@@ -23,6 +23,8 @@ images = {
     ],
 }
 
+guage = Guage(20, 50, 0, 100)
+
 down_left, down_right = False, False
 
 all_sprites = pygame.sprite.Group()
@@ -115,10 +117,7 @@ def input_manager(event):
 
 
 def chk_collide(a, b):
-    if pygame.Rect.collidelist(a, b) == -1:
-        return False
-    else:
-        return True
+    return pygame.Rect.collidelist(a, b) + 1
 
 
 while RUNNING:
@@ -143,6 +142,18 @@ while RUNNING:
     elif chk_collide(player.rect, borders[2]) or chk_collide(player.rect, borders[3]):
         if 0 < to_x:
             to_x = 0
+    col = chk_collide(player.rect, places["a"])
+    if col:
+        print(places["a"][col - 1].name)
+
+    col = chk_collide(player.rect, places["b"])
+    if col:
+        print(places["b"][col - 1].name)
+
+    col = chk_collide(player.rect, places["c"])
+    if col:
+        print(places["c"][col - 1].name)
+
     player_x += to_x
     player.update((player_x, 240))
     all_sprites.draw(SCREEN)
