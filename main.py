@@ -13,6 +13,7 @@ to_x = 0
 gravity = 1
 
 place_path = "./resources/images/place/"
+guage_path = "./resources/images/guage/"
 images = {
     "player": pygame.image.load("./resources/images/character/player.png"),
     "border": pygame.image.load("./resources/images/background/border.png"),
@@ -21,7 +22,13 @@ images = {
         (i.split(".")[0], pygame.image.load(place_path + i))
         for i in os.listdir(place_path)
     ],
+    "guage": {
+        i.split(".")[0]: pygame.image.load(guage_path + i)
+        for i in os.listdir(guage_path)
+    },
 }
+
+print(images["guage"])
 
 guage = Guage(20, 50, 0, 100)
 
@@ -36,8 +43,9 @@ RUNNING = True
 speed = 0.2
 
 borders = [[], [], [], []]
+# a: 놀기 b: 공부 c: 취미
 places = {"a": [], "b": [], "c": []}
-
+place_cnt = {}
 
 player = Character(images["player"])
 
@@ -46,8 +54,8 @@ for i in range(32):
     block = [
         Border(images["border"], (214, now_y)),
         Border(images["border"], (214, size_y + now_y)),
-        Border(images["border"], (614, now_y)),
-        Border(images["border"], (614, size_y + now_y)),
+        Border(images["border"], (498, now_y)),
+        Border(images["border"], (498, size_y + now_y)),
     ]
     for i in range(4):
         borders[i].append(block[i])
@@ -57,6 +65,7 @@ for i, v in enumerate(images["place"]):
     file_name = v[0]
     file = v[1]
     places[v[0][0]].append(Place(file, file_name[2:], (33, size_y)))
+    place_cnt[file_name[2:]] = 0
 
 
 place_now_set = [-1, -1, -1]
@@ -117,13 +126,15 @@ def input_manager(event):
 
 
 def chk_collide(a, b):
-    return pygame.Rect.collidelist(a, b) + 1
+    return pygame.Rect.collidelist(a, b)
 
 
 def place_collide(player, place_type):
-    col = chk_collide(player.rect, places[place_type])
+    col = chk_collide(player.rect, places[place_type]) + 1
     if col:
-        print(places[place_type][col - 1].name)
+        return places[place_type][col - 1].name
+    else:
+        return False
 
 
 while RUNNING:
@@ -142,15 +153,40 @@ while RUNNING:
     if place_now.rect.y - 40 <= player.rect.y <= place_now.rect.y + 200:
         to_x -= gravity
 
-    if chk_collide(player.rect, borders[0]) or chk_collide(player.rect, borders[1]):
+    if (
+        chk_collide(player.rect, borders[0]) + 1
+        or chk_collide(player.rect, borders[1]) + 1
+    ):
         if to_x < 0:
             to_x = 0
-    elif chk_collide(player.rect, borders[2]) or chk_collide(player.rect, borders[3]):
+    elif (
+        chk_collide(player.rect, borders[2]) + 1
+        or chk_collide(player.rect, borders[3]) + 1
+    ):
         if 0 < to_x:
             to_x = 0
-    place_collide(player, "a")
-    place_collide(player, "b")
-    place_collide(player, "c")
+
+    # 스트레스 풀기
+    col_place = place_collide(player, "a")
+    if col_place:
+        guage.stress -= 5
+        place_cnt[col_place] += 1
+        if col_place == "alley":
+            guage.health -= 5
+        if col_place == "basketball":
+            guage.health += 5
+        if 3 <= place_cnt[col_place]:
+            guage.grade -= 5
+
+    col_place = place_collide(player, "b")
+    if col_place:
+        guage.stress += 5
+        guage.grade += 5
+
+    col_place = place_collide(player, "c")
+    if col_place:
+        guage.stress -= 5
+        guage.future += 5
 
     player_x += to_x
     player.update((player_x, 240))
