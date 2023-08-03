@@ -82,7 +82,6 @@ def move_background():
 
     SCREEN.blit(images["background"], (0, bg_y))
     SCREEN.blit(images["background"], (0, 640 + bg_y))
-    SCREEN.blit(images["guage"]["frame"], (525, 440))
     for idx in range(32):
         if 12 <= idx < 16:
             if 2 < place_idx:
@@ -139,6 +138,7 @@ def place_collide(player, place_type):
 
 while RUNNING:
     dt = CLOCK.tick(60)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             RUNNING = False
@@ -166,28 +166,49 @@ while RUNNING:
         if 0 < to_x:
             to_x = 0
 
-    # 스트레스 풀기
-    col_place = place_collide(player, "a")
-    if col_place:
-        guage.stress -= 5
-        place_cnt[col_place] += 1
-        if col_place == "alley":
-            guage.health -= 5
-        if col_place == "basketball":
-            guage.health += 5
-        if 3 <= place_cnt[col_place]:
-            guage.grade -= 5
+    # # 스트레스 풀기
+    # col_place = place_collide(player, "a")
+    # if col_place:
+    #     guage.stress -= 5
+    #     place_cnt[col_place] += 1
+    #     if col_place == "alley":
+    #         guage.health -= 5
+    #     if col_place == "basketball":
+    #         guage.health += 5
+    #     if 3 <= place_cnt[col_place]:
+    #         guage.grade -= 5
 
-    col_place = place_collide(player, "b")
-    if col_place:
-        guage.stress += 5
-        guage.grade += 5
+    # col_place = place_collide(player, "b")
+    # if col_place:
+    #     guage.stress += 5
+    #     guage.grade += 5
 
-    col_place = place_collide(player, "c")
-    if col_place:
-        guage.stress -= 5
-        guage.future += 5
+    # col_place = place_collide(player, "c")
+    # if col_place:
+    #     guage.stress -= 5
+    #     guage.future += 5
 
+    SCREEN.blit(images["guage"]["frame"], (525, 440))
+    SCREEN.blit(images["guage"]["frame"], (525, 400))
+    SCREEN.blit(images["guage"]["frame"], (525, 360))
+    SCREEN.blit(images["guage"]["frame"], (525, 320))
+    for i in range(20):
+        if guage.health // 5 <= i:
+            break
+        SCREEN.blit(images["guage"]["health"], (527 + 5 * i, 322))
+    for i in range(20):
+        if guage.future // 5 <= i:
+            break
+        SCREEN.blit(images["guage"]["future"], (527 + 5 * i, 362))
+    for i in range(20):
+        if guage.stress // 5 <= i:
+            break
+        SCREEN.blit(images["guage"]["stress"], (527 + 5 * i, 402))
+    for i in range(20):
+        print(i)
+        if guage.grade // 5 <= i:
+            break
+        SCREEN.blit(images["guage"]["grade"], (527 + 5 * i, 442))
     player_x += to_x
     player.update((player_x, 240))
     all_sprites.draw(SCREEN)
