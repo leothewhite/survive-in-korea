@@ -35,6 +35,8 @@ down_left, down_right = False, False
 
 all_sprites = pygame.sprite.Group()
 
+block_len = 32
+
 SCREEN = pygame.display.set_mode((size_x, size_y))
 CLOCK = pygame.time.Clock()
 RUNNING = True
@@ -48,8 +50,8 @@ place_cnt = {}
 
 player = Character(images["player"])
 
-for i in range(32):
-    now_y = i * 40
+for i in range(block_len):
+    now_y = i * 60
     block = [
         Border(images["border"], (171, now_y)),
         Border(images["border"], (171, size_y + now_y)),
@@ -82,7 +84,7 @@ def move_background():
 
     SCREEN.blit(images["background"], (0, bg_y))
     SCREEN.blit(images["background"], (0, 640 + bg_y))
-    for idx in range(32):
+    for idx in range(block_len):
         if 12 <= idx < 16:
             if 2 < place_idx:
                 for i in range(3):
@@ -99,7 +101,7 @@ def move_background():
             for t in range(4):
                 now = borders[t][idx]
                 now.update((now.rect.x, bg_y + idx * 40))
-    if bg_y <= -size_y - 200:
+    if bg_y <= -size_y - 160:
         place_idx += 1
         bg_y = 0
 
@@ -194,26 +196,30 @@ while RUNNING:
             to_x = 0
 
     # # 스트레스 풀기
-    # col_place = place_collide(player, "a")
-    # if col_place:
-    #     guage.stress -= 5
-    #     place_cnt[col_place] += 1
-    #     if col_place == "alley":
-    #         guage.health -= 5
-    #     if col_place == "basketball":
-    #         guage.health += 5
-    #     if 3 <= place_cnt[col_place]:
-    #         guage.grade -= 5
+    col_place = place_collide(player, "a")
+    if col_place:
+        guage.stress -= 5
+        place_cnt[col_place] += 1
+        if col_place == "alley":
+            guage.health -= 5
+        if col_place == "basketball":
+            guage.health += 5
+        if 3 <= place_cnt[col_place]:
+            guage.grade -= 5
 
-    # col_place = place_collide(player, "b")
-    # if col_place:
-    #     guage.stress += 5
-    #     guage.grade += 5
+        player_x = 320
 
-    # col_place = place_collide(player, "c")
-    # if col_place:
-    #     guage.stress -= 5
-    #     guage.future += 5
+    col_place = place_collide(player, "b")
+    if col_place:
+        guage.stress += 5
+        guage.grade += 5
+        player_x = 320
+
+    col_place = place_collide(player, "c")
+    if col_place:
+        guage.stress -= 5
+        guage.future += 5
+        player_x = 320
 
     draw_guage()
     player_x += to_x
