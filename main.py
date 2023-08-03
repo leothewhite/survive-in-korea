@@ -136,6 +136,33 @@ def place_collide(player, place_type):
         return False
 
 
+def draw_guage():
+    SCREEN.blit(images["guage"]["frame"], (525, 440))
+    SCREEN.blit(images["guage"]["frame"], (525, 400))
+    SCREEN.blit(images["guage"]["frame"], (525, 360))
+    SCREEN.blit(images["guage"]["frame"], (525, 320))
+
+    for i in range(20):
+        if guage.health // 5 <= i:
+            break
+        SCREEN.blit(images["guage"]["health"], (527 + 5 * i, 322))
+
+    for i in range(20):
+        if guage.future // 5 <= i:
+            break
+        SCREEN.blit(images["guage"]["future"], (527 + 5 * i, 362))
+
+    for i in range(20):
+        if guage.stress // 5 <= i:
+            break
+        SCREEN.blit(images["guage"]["stress"], (527 + 5 * i, 402))
+
+    for i in range(20):
+        if guage.grade // 5 <= i:
+            break
+        SCREEN.blit(images["guage"]["grade"], (527 + 5 * i, 442))
+
+
 while RUNNING:
     dt = CLOCK.tick(60)
 
@@ -188,27 +215,7 @@ while RUNNING:
     #     guage.stress -= 5
     #     guage.future += 5
 
-    SCREEN.blit(images["guage"]["frame"], (525, 440))
-    SCREEN.blit(images["guage"]["frame"], (525, 400))
-    SCREEN.blit(images["guage"]["frame"], (525, 360))
-    SCREEN.blit(images["guage"]["frame"], (525, 320))
-    for i in range(20):
-        if guage.health // 5 <= i:
-            break
-        SCREEN.blit(images["guage"]["health"], (527 + 5 * i, 322))
-    for i in range(20):
-        if guage.future // 5 <= i:
-            break
-        SCREEN.blit(images["guage"]["future"], (527 + 5 * i, 362))
-    for i in range(20):
-        if guage.stress // 5 <= i:
-            break
-        SCREEN.blit(images["guage"]["stress"], (527 + 5 * i, 402))
-    for i in range(20):
-        print(i)
-        if guage.grade // 5 <= i:
-            break
-        SCREEN.blit(images["guage"]["grade"], (527 + 5 * i, 442))
+    draw_guage()
     player_x += to_x
     player.update((player_x, 240))
     all_sprites.draw(SCREEN)
