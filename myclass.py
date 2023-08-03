@@ -41,8 +41,8 @@ class Place(pygame.sprite.Sprite):
 
 
 class Guage:
-    def __init__(self, stress, grade, future, health):
-        self.stress = stress
-        self.grade = grade
-        self.future = future
-        self.health = health
+    def __init__(self):
+        self.stress = 20
+        self.grade = 50
+        self.future = 0
+        self.health = 100

@@ -25,12 +25,11 @@ images = {
     "guage": {
         i.split(".")[0]: pygame.image.load(guage_path + i)
         for i in os.listdir(guage_path)
+        if i != ".DS_Store"
     },
 }
 
-print(images["guage"])
-
-guage = Guage(20, 50, 0, 100)
+guage = Guage()
 
 down_left, down_right = False, False
 
@@ -52,10 +51,10 @@ player = Character(images["player"])
 for i in range(32):
     now_y = i * 40
     block = [
-        Border(images["border"], (214, now_y)),
-        Border(images["border"], (214, size_y + now_y)),
-        Border(images["border"], (498, now_y)),
-        Border(images["border"], (498, size_y + now_y)),
+        Border(images["border"], (171, now_y)),
+        Border(images["border"], (171, size_y + now_y)),
+        Border(images["border"], (456, now_y)),
+        Border(images["border"], (456, size_y + now_y)),
     ]
     for i in range(4):
         borders[i].append(block[i])
@@ -83,15 +82,16 @@ def move_background():
 
     SCREEN.blit(images["background"], (0, bg_y))
     SCREEN.blit(images["background"], (0, 640 + bg_y))
+    SCREEN.blit(images["guage"]["frame"], (525, 440))
     for idx in range(32):
-        if 12 <= idx <= 16:
+        if 12 <= idx < 16:
             if 2 < place_idx:
                 for i in range(3):
                     place_now_set[i] = random.choice(places[chr(i + 97)])
                 random.shuffle(place_now_set)
                 place_idx = 0
             place_now = place_now_set[place_idx]
-            place_now.update((33, bg_y + size_y))
+            place_now.update((0, bg_y + size_y))
             place_now.draw(SCREEN)
             for t in range(2, 4):
                 now = borders[t][idx]
