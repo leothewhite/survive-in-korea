@@ -92,7 +92,7 @@ def move_background():
                 random.shuffle(place_now_set)
                 place_idx = 0
             place_now = place_now_set[place_idx]
-            place_now.update((0, bg_y + size_y))
+            place_now.update((31, bg_y + size_y))
             place_now.draw(SCREEN)
             for t in range(2, 4):
                 now = borders[t][idx]
