@@ -5,6 +5,13 @@ from property import ManageVariable, Border, Place, Guage
 
 intl = ManageVariable()
 
+bg_y = 0
+place_cnt = {}
+place_now_set = [-1, -1, -1]
+place_idx = 3
+borders = [[], [], [], []]
+guage = Guage()
+
 
 def load_images():
     place_path = "./resources/images/place/"
@@ -27,35 +34,36 @@ def load_images():
     for _, v in enumerate(intl.images["place"]):
         file_name = v[0]
         file = v[1]
-        intl.places[v[0][0]].append(Place(file, file_name[2:], (33, intl.size_y)))
-        intl.place_cnt[file_name[2:]] = 0
+        intl.places[v[0][0]].append(Place(file, file_name[2:], (33, 480)))
+        place_cnt[file_name[2:]] = 0
 
 
 def background_manager():
-    intl.SCREEN.blit(intl.images["background"], (0, intl.bg_y))
-    intl.SCREEN.blit(intl.images["background"], (0, 640 + intl.bg_y))
+    global bg_y, place_idx
+    intl.SCREEN.blit(intl.images["background"], (0, bg_y))
+    intl.SCREEN.blit(intl.images["background"], (0, 640 + bg_y))
     for idx in range(32):
         if 12 <= idx < 16:
-            if 2 < intl.place_idx:
+            if 2 < place_idx:
                 for i in range(3):
-                    intl.place_now_set[i] = random.choice(intl.places[chr(i + 97)])
-                random.shuffle(intl.place_now_set)
-                intl.place_idx = 0
-            intl.place_now = intl.place_now_set[intl.place_idx]
-            intl.place_now.update((31, intl.bg_y + intl.size_y))
+                    place_now_set[i] = random.choice(intl.places[chr(i + 97)])
+                random.shuffle(place_now_set)
+                place_idx = 0
+            intl.place_now = place_now_set[place_idx]
+            intl.place_now.update((31, bg_y + 480))
             intl.place_now.draw(intl.SCREEN)
             for t in range(2, 4):
-                now = intl.borders[t][idx]
-                now.update((now.rect.x, intl.bg_y + idx * 40))
+                now = borders[t][idx]
+                now.update((now.rect.x, bg_y + idx * 40))
         else:
             for t in range(4):
-                now = intl.borders[t][idx]
-                now.update((now.rect.x, intl.bg_y + idx * 40))
-    if intl.bg_y <= -intl.size_y - 160:
-        intl.place_idx += 1
-        intl.bg_y = 0
+                now = borders[t][idx]
+                now.update((now.rect.x, bg_y + idx * 40))
+    if bg_y <= -480 - 160:
+        place_idx += 1
+        bg_y = 0
 
-    intl.bg_y -= 0.15 * intl.dt
+    bg_y -= 0.15 * intl.dt
 
 
 def guage_manager():
@@ -65,22 +73,22 @@ def guage_manager():
     intl.SCREEN.blit(intl.images["guage"]["frame"], (525, 320))
 
     for i in range(20):
-        if intl.guage.health // 5 <= i:
+        if guage.health // 5 <= i:
             break
         intl.SCREEN.blit(intl.images["guage"]["health"], (527 + 5 * i, 322))
 
     for i in range(20):
-        if intl.guage.future // 5 <= i:
+        if guage.future // 5 <= i:
             break
         intl.SCREEN.blit(intl.images["guage"]["future"], (527 + 5 * i, 362))
 
     for i in range(20):
-        if intl.guage.stress // 5 <= i:
+        if guage.stress // 5 <= i:
             break
         intl.SCREEN.blit(intl.images["guage"]["stress"], (527 + 5 * i, 402))
 
     for i in range(20):
-        if intl.guage.grade // 5 <= i:
+        if guage.grade // 5 <= i:
             break
         intl.SCREEN.blit(intl.images["guage"]["grade"], (527 + 5 * i, 442))
 
@@ -116,44 +124,44 @@ def place_collide(player, place_type):
 
 def collide_manager():
     if (
-        chk_collide(intl.player.rect, intl.borders[0]) + 1
-        or chk_collide(intl.player.rect, intl.borders[1]) + 1
+        chk_collide(intl.player.rect, borders[0]) + 1
+        or chk_collide(intl.player.rect, borders[1]) + 1
     ):
         if intl.to_x < 0:
             intl.to_x = 0
     elif (
-        chk_collide(intl.player.rect, intl.borders[2]) + 1
-        or chk_collide(intl.player.rect, intl.borders[3]) + 1
+        chk_collide(intl.player.rect, borders[2]) + 1
+        or chk_collide(intl.player.rect, borders[3]) + 1
     ):
         if 0 < intl.to_x:
             intl.to_x = 0
 
     col_place = place_collide(intl.player, "a")
     if col_place:
-        intl.guage.sub_stress(5)
-        intl.place_cnt[col_place] += 1
+        guage.sub_stress(5)
+        place_cnt[col_place] += 1
         if col_place == "alley":
-            intl.guage.sub_health(5)
+            guage.sub_health(5)
         if col_place == "basketball":
-            intl.guage.add_health(5)
-        if 3 <= intl.place_cnt[col_place]:
-            intl.guage.sub_grade(5)
-            intl.place_cnt[col_place] = 0
+            guage.add_health(5)
+        if 3 <= place_cnt[col_place]:
+            guage.sub_grade(5)
+            place_cnt[col_place] = 0
 
         intl.player_x = 320
 
     col_place = place_collide(intl.player, "b")
     if col_place:
-        intl.place_cnt[col_place] += 1
-        intl.guage.add_stress(5)
-        intl.guage.add_grade(5)
+        place_cnt[col_place] += 1
+        guage.add_stress(5)
+        guage.add_grade(5)
         intl.player_x = 320
 
     col_place = place_collide(intl.player, "c")
     if col_place:
-        intl.place_cnt[col_place] += 1
-        intl.guage.sub_stress(5)
-        intl.guage.add_future(5)
+        place_cnt[col_place] += 1
+        guage.sub_stress(5)
+        guage.add_future(5)
         intl.player_x = 320
 
 
@@ -162,10 +170,10 @@ def load_border():
         now_y = i * 60
         intl.block = [
             Border(intl.images["border"], (171, now_y)),
-            Border(intl.images["border"], (171, intl.size_y + now_y)),
+            Border(intl.images["border"], (171, 480 + now_y)),
             Border(intl.images["border"], (456, now_y)),
-            Border(intl.images["border"], (456, intl.size_y + now_y)),
+            Border(intl.images["border"], (456, 480 + now_y)),
         ]
         for i in range(4):
-            intl.borders[i].append(intl.block[i])
+            borders[i].append(intl.block[i])
             intl.all_sprites.add(intl.block[i])
