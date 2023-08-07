@@ -2,19 +2,21 @@ import pygame
 import os
 import random
 
-from myclass import *
+from property import Character, Border, Place, Guage, ManageVariable
+from manager import move_background
 
 pygame.init()
 
+intl = ManageVariable()
 
-size_x, size_y = 640, 480
+intl.size_x, intl.size_y = 640, 480
 player_x = 320
 to_x = 0
 gravity = 1
 
 place_path = "./resources/images/place/"
 guage_path = "./resources/images/guage/"
-images = {
+intl.images = {
     "player": pygame.image.load("./resources/images/character/player.png"),
     "border": pygame.image.load("./resources/images/background/border.png"),
     "background": pygame.image.load("./resources/images/background/background.png"),
@@ -35,88 +37,58 @@ down_left, down_right = False, False
 
 all_sprites = pygame.sprite.Group()
 
-block_len = 32
 
-SCREEN = pygame.display.set_mode((size_x, size_y))
+intl.SCREEN = pygame.display.set_mode((intl.size_x, intl.size_y))
 CLOCK = pygame.time.Clock()
 RUNNING = True
 
 speed = 0.2
 
-borders = [[], [], [], []]
+intl.borders = [[], [], [], []]
 # a: 놀기 b: 공부 c: 취미
-places = {"a": [], "b": [], "c": []}
+intl.places = {"a": [], "b": [], "c": []}
 place_cnt = {}
 
-player = Character(images["player"])
+player = Character(intl.images["player"])
 
-for i in range(block_len):
+for i in range(32):
     now_y = i * 60
     block = [
-        Border(images["border"], (171, now_y)),
-        Border(images["border"], (171, size_y + now_y)),
-        Border(images["border"], (456, now_y)),
-        Border(images["border"], (456, size_y + now_y)),
+        Border(intl.images["border"], (171, now_y)),
+        Border(intl.images["border"], (171, intl.size_y + now_y)),
+        Border(intl.images["border"], (456, now_y)),
+        Border(intl.images["border"], (456, intl.size_y + now_y)),
     ]
     for i in range(4):
-        borders[i].append(block[i])
+        intl.borders[i].append(block[i])
         all_sprites.add(block[i])
 
-for i, v in enumerate(images["place"]):
+for i, v in enumerate(intl.images["place"]):
     file_name = v[0]
     file = v[1]
-    places[v[0][0]].append(Place(file, file_name[2:], (33, size_y)))
+    intl.places[v[0][0]].append(Place(file, file_name[2:], (33, intl.size_y)))
     place_cnt[file_name[2:]] = 0
 
 
-place_now_set = [-1, -1, -1]
-place_now = places["a"][0]
-place_idx = 3
+intl.place_now_set = [-1, -1, -1]
+place_now = intl.places["a"][0]
+intl.place_idx = 3
 
 player.update((player_x, 240))
 all_sprites.add(player)
 
-bg_y = 0
-
-
-def move_background():
-    global bg_y, place_idx, place_now
-
-    SCREEN.blit(images["background"], (0, bg_y))
-    SCREEN.blit(images["background"], (0, 640 + bg_y))
-    for idx in range(block_len):
-        if 12 <= idx < 16:
-            if 2 < place_idx:
-                for i in range(3):
-                    place_now_set[i] = random.choice(places[chr(i + 97)])
-                random.shuffle(place_now_set)
-                place_idx = 0
-            place_now = place_now_set[place_idx]
-            place_now.update((31, bg_y + size_y))
-            place_now.draw(SCREEN)
-            for t in range(2, 4):
-                now = borders[t][idx]
-                now.update((now.rect.x, bg_y + idx * 40))
-        else:
-            for t in range(4):
-                now = borders[t][idx]
-                now.update((now.rect.x, bg_y + idx * 40))
-    if bg_y <= -size_y - 160:
-        place_idx += 1
-        bg_y = 0
-
-    bg_y -= 0.15 * dt
+intl.bg_y = 0
 
 
 def input_manager(event):
     global to_x, down_left, down_right
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_LEFT:
-            to_x -= speed * 3 * dt
+            to_x -= speed * 3 * intl.dt
             down_left = True
 
         if event.key == pygame.K_RIGHT:
-            to_x += speed * 3 * dt
+            to_x += speed * 3 * intl.dt
             down_right = True
 
     if event.type == pygame.KEYUP:
@@ -131,51 +103,51 @@ def chk_collide(a, b):
 
 
 def place_collide(player, place_type):
-    col = chk_collide(player.rect, places[place_type]) + 1
+    col = chk_collide(player.rect, intl.places[place_type]) + 1
     if col:
-        return places[place_type][col - 1].name
+        return intl.places[place_type][col - 1].name
     else:
         return False
 
 
 def draw_guage():
-    SCREEN.blit(images["guage"]["frame"], (525, 440))
-    SCREEN.blit(images["guage"]["frame"], (525, 400))
-    SCREEN.blit(images["guage"]["frame"], (525, 360))
-    SCREEN.blit(images["guage"]["frame"], (525, 320))
+    intl.SCREEN.blit(intl.images["guage"]["frame"], (525, 440))
+    intl.SCREEN.blit(intl.images["guage"]["frame"], (525, 400))
+    intl.SCREEN.blit(intl.images["guage"]["frame"], (525, 360))
+    intl.SCREEN.blit(intl.images["guage"]["frame"], (525, 320))
 
     for i in range(20):
         if guage.health // 5 <= i:
             break
-        SCREEN.blit(images["guage"]["health"], (527 + 5 * i, 322))
+        intl.SCREEN.blit(intl.images["guage"]["health"], (527 + 5 * i, 322))
 
     for i in range(20):
         if guage.future // 5 <= i:
             break
-        SCREEN.blit(images["guage"]["future"], (527 + 5 * i, 362))
+        intl.SCREEN.blit(intl.images["guage"]["future"], (527 + 5 * i, 362))
 
     for i in range(20):
         if guage.stress // 5 <= i:
             break
-        SCREEN.blit(images["guage"]["stress"], (527 + 5 * i, 402))
+        intl.SCREEN.blit(intl.images["guage"]["stress"], (527 + 5 * i, 402))
 
     for i in range(20):
         if guage.grade // 5 <= i:
             break
-        SCREEN.blit(images["guage"]["grade"], (527 + 5 * i, 442))
+        intl.SCREEN.blit(intl.images["guage"]["grade"], (527 + 5 * i, 442))
 
 
 while RUNNING:
-    dt = CLOCK.tick(60)
+    intl.dt = CLOCK.tick(60)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             RUNNING = False
         input_manager(event)
     if down_left:
-        to_x -= speed * dt
+        to_x -= speed * intl.dt
     if down_right:
-        to_x += speed * dt
+        to_x += speed * intl.dt
 
     move_background()
 
@@ -183,14 +155,14 @@ while RUNNING:
         to_x -= gravity
 
     if (
-        chk_collide(player.rect, borders[0]) + 1
-        or chk_collide(player.rect, borders[1]) + 1
+        chk_collide(player.rect, intl.borders[0]) + 1
+        or chk_collide(player.rect, intl.borders[1]) + 1
     ):
         if to_x < 0:
             to_x = 0
     elif (
-        chk_collide(player.rect, borders[2]) + 1
-        or chk_collide(player.rect, borders[3]) + 1
+        chk_collide(player.rect, intl.borders[2]) + 1
+        or chk_collide(player.rect, intl.borders[3]) + 1
     ):
         if 0 < to_x:
             to_x = 0
@@ -224,7 +196,7 @@ while RUNNING:
     draw_guage()
     player_x += to_x
     player.update((player_x, 240))
-    all_sprites.draw(SCREEN)
+    all_sprites.draw(intl.SCREEN)
     to_x = 0
 
     pygame.display.update()
