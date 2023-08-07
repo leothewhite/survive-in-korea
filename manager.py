@@ -141,6 +141,7 @@ def collide_manager():
     if col_place:
         place_cnt[col_place] += 1  # 장소 카운트
         guage.sub_stress(5)  # 스트레스 5 감소
+
         if col_place == "alley":  # 불건전 건강 5 감소
             guage.sub_health(5)
         if col_place == "basketball":  # 운동 건강 5 추가
@@ -157,6 +158,10 @@ def collide_manager():
         place_cnt[col_place] += 1
         guage.add_stress(5)
         guage.add_grade(5)
+
+        if 5 <= place_cnt[col_place]:
+            guage.sub_health(5)
+            place_cnt[col_place] = 0
 
         intl.player_x = 320
 
