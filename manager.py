@@ -6,24 +6,6 @@ from property import ManageVariable, Border, Place, Guage
 intl = ManageVariable()
 
 
-def make_variable():
-    intl.size_x, intl.size_y = 640, 480
-    intl.player_x = 320
-    intl.to_x = 0
-    intl.gravity = 1
-    intl.guage = Guage()
-    intl.down_left, intl.down_right = False, False
-    intl.all_sprites = pygame.sprite.Group()
-    intl.SCREEN = pygame.display.set_mode((intl.size_x, intl.size_y))
-    intl.speed = 0.2
-    intl.borders = [[], [], [], []]
-    intl.places = {"a": [], "b": [], "c": []}
-    intl.place_cnt = {}
-    intl.bg_y = 0
-    intl.place_now_set = [-1, -1, -1]
-    intl.place_idx = 3
-
-
 def load_images():
     intl.place_path = "./resources/images/place/"
     intl.guage_path = "./resources/images/guage/"
