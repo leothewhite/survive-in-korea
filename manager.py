@@ -7,19 +7,19 @@ intl = ManageVariable()
 
 
 def load_images():
-    intl.place_path = "./resources/images/place/"
-    intl.guage_path = "./resources/images/guage/"
+    place_path = "./resources/images/place/"
+    guage_path = "./resources/images/guage/"
     intl.images = {
         "player": pygame.image.load("./resources/images/character/player.png"),
         "border": pygame.image.load("./resources/images/background/border.png"),
         "background": pygame.image.load("./resources/images/background/background.png"),
         "place": [
-            (i.split(".")[0], pygame.image.load(intl.place_path + i))
-            for i in os.listdir(intl.place_path)
+            (i.split(".")[0], pygame.image.load(place_path + i))
+            for i in os.listdir(place_path)
         ],
         "guage": {
-            i.split(".")[0]: pygame.image.load(intl.guage_path + i)
-            for i in os.listdir(intl.guage_path)
+            i.split(".")[0]: pygame.image.load(guage_path + i)
+            for i in os.listdir(guage_path)
             if i != ".DS_Store"
         },
     }
