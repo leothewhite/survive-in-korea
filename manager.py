@@ -15,8 +15,6 @@ def make_variable():
     intl.down_left, intl.down_right = False, False
     intl.all_sprites = pygame.sprite.Group()
     intl.SCREEN = pygame.display.set_mode((intl.size_x, intl.size_y))
-    intl.CLOCK = pygame.time.Clock()
-    intl.RUNNING = True
     intl.speed = 0.2
     intl.borders = [[], [], [], []]
     intl.places = {"a": [], "b": [], "c": []}

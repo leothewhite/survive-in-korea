@@ -20,6 +20,8 @@ make_variable()
 load_images()
 load_border()
 
+CLOCK = pygame.time.Clock()
+RUNNING = True
 
 intl.player = Character(intl.images["player"])
 intl.place_now = intl.places["a"][0]
@@ -28,12 +30,12 @@ intl.player.update((intl.player_x, 240))
 intl.all_sprites.add(intl.player)
 
 
-while intl.RUNNING:
-    intl.dt = intl.CLOCK.tick(60)
+while RUNNING:
+    intl.dt = CLOCK.tick(60)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            intl.RUNNING = False
+            RUNNING = False
         input_manager(event)
 
     if intl.down_left:
