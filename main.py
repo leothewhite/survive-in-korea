@@ -15,6 +15,6 @@ while RUNNING:
     intl.dt = CLOCK.tick(60)
 
     if now_scene == "GAME":
-        RUNNING = game_scene()
+        RUNNING, now_scene = game_scene()
 
 pygame.quit()

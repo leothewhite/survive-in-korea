@@ -34,6 +34,7 @@ def game_scene():
         intl.to_x -= intl.speed * intl.dt
     if intl.down_right:
         intl.to_x += intl.speed * intl.dt
+
     make_gravity()
     background_manager()
     collide_manager()
@@ -47,4 +48,4 @@ def game_scene():
 
     pygame.display.update()
 
-    return True
+    return True, "GAME"
