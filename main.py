@@ -1,6 +1,6 @@
 import pygame
 
-from property import Character, Border, Place, Guage, ManageVariable
+from property import *
 from manager import *
 
 pygame.init()

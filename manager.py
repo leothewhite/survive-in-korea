@@ -136,27 +136,31 @@ def collide_manager():
         if 0 < intl.to_x:
             intl.to_x = 0
 
+    # 스트레스 풀기
     col_place = place_collide(intl.player, "a")
     if col_place:
-        guage.sub_stress(5)
-        place_cnt[col_place] += 1
-        if col_place == "alley":
+        place_cnt[col_place] += 1  # 장소 카운트
+        guage.sub_stress(5)  # 스트레스 5 감소
+        if col_place == "alley":  # 불건전 건강 5 감소
             guage.sub_health(5)
-        if col_place == "basketball":
+        if col_place == "basketball":  # 운동 건강 5 추가
             guage.add_health(5)
-        if 3 <= place_cnt[col_place]:
+        if 5 <= place_cnt[col_place]:  # 5번 이상 들를시 성적 5 줄임
             guage.sub_grade(5)
             place_cnt[col_place] = 0
 
         intl.player_x = 320
 
+    # 공부
     col_place = place_collide(intl.player, "b")
     if col_place:
         place_cnt[col_place] += 1
         guage.add_stress(5)
         guage.add_grade(5)
+
         intl.player_x = 320
 
+    # 진로
     col_place = place_collide(intl.player, "c")
     if col_place:
         place_cnt[col_place] += 1
