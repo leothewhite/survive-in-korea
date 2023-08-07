@@ -11,6 +11,7 @@ place_now_set = [-1, -1, -1]
 place_idx = 3
 borders = [[], [], [], []]
 guage = Guage()
+gravity = 1
 
 
 def load_images():
@@ -34,7 +35,7 @@ def load_images():
     for _, v in enumerate(intl.images["place"]):
         file_name = v[0]
         file = v[1]
-        intl.places[v[0][0]].append(Place(file, file_name[2:], (33, 480)))
+        intl.places[v[0][0]].append(Place(file, file_name[2:], (33, 480), file_name[0]))
         place_cnt[file_name[2:]] = 0
 
 
@@ -186,3 +187,14 @@ def load_border():
         for i in range(4):
             borders[i].append(intl.block[i])
             intl.all_sprites.add(intl.block[i])
+
+
+def make_gravity():
+    global gravity
+    if intl.place_now.type == "a" or intl.place_now.type == "c":
+        gravity = guage.stress / 20
+    elif intl.place_now.type == "b":
+        gravity = -(guage.stress / 20)
+
+    if intl.place_now.rect.y - 40 <= intl.player.rect.y <= intl.place_now.rect.y + 200:
+        intl.to_x -= gravity

@@ -7,8 +7,6 @@ pygame.init()
 
 intl = ManageVariable()
 
-gravity = 1
-
 intl.player_x = 320
 intl.to_x = 0
 intl.down_left, intl.down_right = False, False
@@ -43,10 +41,7 @@ while RUNNING:
         intl.to_x -= intl.speed * intl.dt
     if intl.down_right:
         intl.to_x += intl.speed * intl.dt
-
-    if intl.place_now.rect.y - 40 <= intl.player.rect.y <= intl.place_now.rect.y + 200:
-        intl.to_x -= gravity
-
+    make_gravity()
     background_manager()
     collide_manager()
     guage_manager()
