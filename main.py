@@ -2,57 +2,19 @@ import pygame
 
 from property import *
 from manager import *
+from scene import game_scene
 
 pygame.init()
-
-intl = ManageVariable()
-
-intl.player_x = 320
-intl.to_x = 0
-intl.down_left, intl.down_right = False, False
-intl.all_sprites = pygame.sprite.Group()
-intl.SCREEN = pygame.display.set_mode((640, 480))
-intl.speed = 0.2
-intl.places = {"a": [], "b": [], "c": []}
-
-
-load_images()
-load_border()
 
 CLOCK = pygame.time.Clock()
 RUNNING = True
 
-intl.player = Character(intl.images["player"])
-intl.place_now = intl.places["a"][0]
-
-intl.player.update((intl.player_x, 240))
-intl.all_sprites.add(intl.player)
-
+now_scene = "GAME"
 
 while RUNNING:
     intl.dt = CLOCK.tick(60)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            RUNNING = False
-        input_manager(event)
-
-    if intl.down_left:
-        intl.to_x -= intl.speed * intl.dt
-    if intl.down_right:
-        intl.to_x += intl.speed * intl.dt
-    make_gravity()
-    background_manager()
-    collide_manager()
-    guage_manager()
-
-    intl.player_x += intl.to_x
-
-    intl.player.update((intl.player_x, 240))
-    intl.all_sprites.draw(intl.SCREEN)
-    intl.to_x = 0
-
-    pygame.display.update()
-
+    if now_scene == "GAME":
+        RUNNING = game_scene()
 
 pygame.quit()
