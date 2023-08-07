@@ -148,30 +148,32 @@ def collide_manager():
         if 0 < intl.to_x:
             intl.to_x = 0
 
-    # # 스트레스 풀기
     col_place = place_collide(intl.player, "a")
     if col_place:
-        intl.guage.stress -= 5
+        intl.guage.sub_stress(5)
         intl.place_cnt[col_place] += 1
         if col_place == "alley":
-            intl.guage.health -= 5
+            intl.guage.sub_health(5)
         if col_place == "basketball":
-            intl.guage.health += 5
+            intl.guage.add_health(5)
         if 3 <= intl.place_cnt[col_place]:
-            intl.guage.grade -= 5
+            intl.guage.sub_grade(5)
+            intl.place_cnt[col_place] = 0
 
         intl.player_x = 320
 
     col_place = place_collide(intl.player, "b")
     if col_place:
-        intl.guage.stress += 5
-        intl.guage.grade += 5
+        intl.place_cnt[col_place] += 1
+        intl.guage.add_stress(5)
+        intl.guage.add_grade(5)
         intl.player_x = 320
 
     col_place = place_collide(intl.player, "c")
     if col_place:
-        intl.guage.stress -= 5
-        intl.guage.future += 5
+        intl.place_cnt[col_place] += 1
+        intl.guage.sub_stress(5)
+        intl.guage.add_future(5)
         intl.player_x = 320
 
 
