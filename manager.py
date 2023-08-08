@@ -104,11 +104,16 @@ def input_manager(event):
             intl.to_x += intl.speed * 3 * intl.dt
             intl.down_right = True
 
+        if event.key == pygame.K_ESCAPE:
+            return True
+
     if event.type == pygame.KEYUP:
         if event.key == pygame.K_LEFT:
             intl.down_left = False
         if event.key == pygame.K_RIGHT:
             intl.down_right = False
+
+    return False
 
 
 def chk_collide(a, b):

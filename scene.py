@@ -27,8 +27,11 @@ intl.all_sprites.add(intl.player)
 def game_scene():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            return False
-        input_manager(event)
+            return False, "END"
+        isEsc = input_manager(event)
+
+        if isEsc:
+            return True, "MENU"
 
     if intl.down_left:
         intl.to_x -= intl.speed * intl.dt
@@ -49,3 +52,14 @@ def game_scene():
     pygame.display.update()
 
     return True, "GAME"
+
+
+def menu_scene():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            return False, "END"
+        input_manager(event)
+
+    pygame.display.update()
+
+    return True, "MENU"
