@@ -9,7 +9,7 @@ pygame.init()
 CLOCK = pygame.time.Clock()
 RUNNING = True
 
-now_scene = "GAME"
+now_scene = "MENU"
 
 while RUNNING:
     intl.dt = CLOCK.tick(60)

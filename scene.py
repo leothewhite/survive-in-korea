@@ -28,10 +28,7 @@ def game_scene():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
-        isEsc = input_manager(event)
-
-        if isEsc:
-            return True, "MENU"
+        input_manager(event)
 
     if intl.down_left:
         intl.to_x -= intl.speed * intl.dt
@@ -77,8 +74,10 @@ def menu_scene():
 
             if obj["start"].rect.collidepoint(x, y):
                 print("start game")
+                return True, "GAME"
             if obj["exit"].rect.collidepoint(x, y):
                 print("exit game")
+                return False, "END"
 
     intl.SCREEN.blit(obj["background"], (0, 0))
 
