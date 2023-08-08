@@ -14,6 +14,7 @@ guage = Guage()
 gravity = 1
 
 
+# * 이미지 불러오기
 def load_images():
     place_path = "./resources/images/place/"
     guage_path = "./resources/images/guage/"
@@ -39,6 +40,7 @@ def load_images():
         place_cnt[file_name[2:]] = 0
 
 
+# * 배경(배경+보더) 움직이기
 def background_manager():
     global bg_y, place_idx
     intl.SCREEN.blit(intl.images["background"], (0, bg_y))
@@ -65,6 +67,12 @@ def background_manager():
         bg_y = 0
 
     bg_y -= 0.15 * intl.dt
+
+
+"""
+* guage 그리기, guage로 인한 게임 오버 처리
+* 만약 게임 오버 될 시 True와 reason 값을 반환
+"""
 
 
 def guage_manager():
@@ -101,6 +109,7 @@ def guage_manager():
     return False, "ok"
 
 
+# * 입력
 def input_manager(event):
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_LEFT:
@@ -117,13 +126,13 @@ def input_manager(event):
         if event.key == pygame.K_RIGHT:
             intl.down_right = False
 
-    return False
 
-
+# * a 스프라이트가 b 스프라이트 리스트에 부딪혔는가
 def chk_collide(a, b):
     return pygame.Rect.collidelist(a, b)
 
 
+# * 플레이어와 (어떤)장소가 충돌했는가를 리턴
 def place_collide(player, place_type):
     col = chk_collide(player.rect, intl.places[place_type]) + 1
     if col:
@@ -132,6 +141,7 @@ def place_collide(player, place_type):
         return False
 
 
+# * 장소랑 보더의 충돌처리, 그로인한 게이지 변화 (횟수로 인한 변화도 포함)
 def collide_manager():
     if (
         chk_collide(intl.player.rect, borders[0]) + 1
@@ -146,23 +156,21 @@ def collide_manager():
         if 0 < intl.to_x:
             intl.to_x = 0
 
-    # 스트레스 풀기
     col_place = place_collide(intl.player, "a")
     if col_place:
-        place_cnt[col_place] += 1  # 장소 카운트
-        guage.sub_stress(5)  # 스트레스 5 감소
+        place_cnt[col_place] += 1
+        guage.sub_stress(5)
 
-        if col_place == "alley":  # 불건전 건강 5 감소
+        if col_place == "alley":
             guage.sub_health(5)
-        if col_place == "basketball":  # 운동 건강 5 추가
+        if col_place == "basketball":
             guage.add_health(5)
-        if 5 <= place_cnt[col_place]:  # 5번 이상 들를시 성적 5 줄임
+        if 5 <= place_cnt[col_place]:
             guage.sub_grade(5)
             place_cnt[col_place] = 0
 
         intl.player_x = 320
 
-    # 공부
     col_place = place_collide(intl.player, "b")
     if col_place:
         place_cnt[col_place] += 1
@@ -175,7 +183,6 @@ def collide_manager():
 
         intl.player_x = 320
 
-    # 진로
     col_place = place_collide(intl.player, "c")
     if col_place:
         place_cnt[col_place] += 1
@@ -184,6 +191,7 @@ def collide_manager():
         intl.player_x = 320
 
 
+# * 보더 이미지를 스프라이트로 만듦
 def load_border():
     for i in range(32):
         now_y = i * 60
@@ -198,6 +206,7 @@ def load_border():
             intl.all_sprites.add(intl.block[i])
 
 
+# * 게이지 값에 따른 중력 값 설정
 def make_gravity():
     global gravity
     if intl.place_now.type == "a" or intl.place_now.type == "c":

@@ -23,6 +23,8 @@ intl.place_now = intl.places["a"][0]
 intl.player.update((intl.player_x, 240))
 intl.all_sprites.add(intl.player)
 
+# * 씬 함수들은 RUNNING과 다음 씬을 리턴한다
+
 
 def game_scene():
     for event in pygame.event.get():
@@ -30,6 +32,7 @@ def game_scene():
             return False, "END"
         input_manager(event)
 
+    # * 꾹 누르고 있는 상태 움직임
     if intl.down_left:
         intl.to_x -= intl.speed * intl.dt
     if intl.down_right:
@@ -40,6 +43,7 @@ def game_scene():
     collide_manager()
     isOver, reason = guage_manager()
 
+    # * 게임 캐릭터가 죽었으면 OVER {reason} 값을 리턴한다
     if isOver:
         return True, "OVER" + f" {reason}"
 
@@ -72,6 +76,7 @@ def menu_scene():
         if event.type == pygame.QUIT:
             return False, "END"
 
+        #  * 마우스 버튼 클릭
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
 

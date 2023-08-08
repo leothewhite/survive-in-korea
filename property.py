@@ -73,6 +73,7 @@ class Guage:
         self.health -= amount
 
 
+# * 전역 변수를 관리하기 윈한 싱글톤 클래스
 class ManageVariable:
     _instance = None
 
