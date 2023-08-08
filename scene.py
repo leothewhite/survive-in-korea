@@ -55,10 +55,34 @@ def game_scene():
 
 
 def menu_scene():
+    all_sprites = pygame.sprite.Group()
+    obj = {
+        "background": pygame.image.load("./resources/images/menu/menu_background.png"),
+        "start": Button(pygame.image.load("./resources/images/menu/game_start.png")),
+        "exit": Button(pygame.image.load("./resources/images/menu/game_exit.png")),
+    }
+
+    obj["start"].update((200, 200))
+    obj["exit"].update((200, 260))
+
+    all_sprites.add(obj["start"])
+    all_sprites.add(obj["exit"])
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
-        input_manager(event)
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = event.pos
+
+            if obj["start"].rect.collidepoint(x, y):
+                print("start game")
+            if obj["exit"].rect.collidepoint(x, y):
+                print("exit game")
+
+    intl.SCREEN.blit(obj["background"], (0, 0))
+
+    all_sprites.draw(intl.SCREEN)
 
     pygame.display.update()
 
