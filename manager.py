@@ -93,6 +93,13 @@ def guage_manager():
             break
         intl.SCREEN.blit(intl.images["guage"]["grade"], (527 + 5 * i, 442))
 
+    if guage.stress == 100:
+        return True, "stress"
+    if guage.health == 0:
+        return True, "health"
+
+    return False, "ok"
+
 
 def input_manager(event):
     if event.type == pygame.KEYDOWN:

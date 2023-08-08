@@ -38,7 +38,10 @@ def game_scene():
     make_gravity()
     background_manager()
     collide_manager()
-    guage_manager()
+    isOver, reason = guage_manager()
+
+    if isOver:
+        return True, "OVER" + f" {reason}"
 
     intl.player_x += intl.to_x
 
@@ -86,3 +89,21 @@ def menu_scene():
     pygame.display.update()
 
     return True, "MENU"
+
+
+def over_scene(reason):
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            return False, "END"
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return True, "MENU"
+
+    over = pygame.image.load("./resources/images/menu/menu_dead.png")
+
+    intl.SCREEN.blit(over, (0, 0))
+
+    pygame.display.update()
+
+    return True, "OVER " + reason
