@@ -203,7 +203,7 @@ def make_gravity():
     if intl.place_now.type == "a" or intl.place_now.type == "c":
         gravity = guage.stress / 20
     elif intl.place_now.type == "b":
-        gravity = -(guage.stress / 20)
+        gravity = -(guage.stress / 40)
 
     if intl.place_now.rect.y - 40 <= intl.player.rect.y <= intl.place_now.rect.y + 200:
         intl.to_x -= gravity
