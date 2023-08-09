@@ -11,7 +11,7 @@ intl.all_sprites = pygame.sprite.Group()
 intl.SCREEN = pygame.display.set_mode((640, 480))
 intl.speed = 0.2
 intl.places = {"a": [], "b": [], "c": []}
-
+intl.inPlace = False
 
 load_images()
 load_border()
@@ -25,22 +25,28 @@ intl.all_sprites.add(intl.player)
 
 # * 씬 함수들은 RUNNING과 다음 씬을 리턴한다
 
+isOver = False
+
 
 def game_scene():
+    global isOver
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
-        input_manager(event)
+        if not intl.inPlace:
+            input_manager(event)
 
     # * 꾹 누르고 있는 상태 움직임
-    if intl.down_left:
-        intl.to_x -= intl.speed * intl.dt
-    if intl.down_right:
-        intl.to_x += intl.speed * intl.dt
+    if not intl.inPlace:
+        if intl.down_left:
+            intl.to_x -= intl.speed * intl.dt
+        if intl.down_right:
+            intl.to_x += intl.speed * intl.dt
 
-    make_gravity()
-    background_manager()
-    collide_manager()
+    if not intl.inPlace:
+        make_gravity()
+        collide_manager()
+        background_manager()
     isOver, reason = guage_manager()
 
     # * 게임 캐릭터가 죽었으면 OVER {reason} 값을 리턴한다

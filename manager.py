@@ -143,6 +143,7 @@ def place_collide(player, place_type):
 
 # * 장소랑 보더의 충돌처리, 그로인한 게이지 변화 (횟수로 인한 변화도 포함)
 def collide_manager():
+    global bg_y
     if (
         chk_collide(intl.player.rect, borders[0]) + 1
         or chk_collide(intl.player.rect, borders[1]) + 1
@@ -158,6 +159,9 @@ def collide_manager():
 
     col_place = place_collide(intl.player, "a")
     if col_place:
+        intl.player_x = 140
+        bg_y = -300
+        intl.inPlace = True
         place_cnt[col_place] += 1
         guage.sub_stress(5)
 
@@ -169,10 +173,11 @@ def collide_manager():
             guage.sub_grade(5)
             place_cnt[col_place] = 0
 
-        intl.player_x = 320
-
     col_place = place_collide(intl.player, "b")
     if col_place:
+        intl.player_x = 140
+        bg_y = -300
+        intl.inPlace = True
         place_cnt[col_place] += 1
         guage.add_stress(5)
         guage.add_grade(5)
@@ -181,14 +186,14 @@ def collide_manager():
             guage.sub_health(5)
             place_cnt[col_place] = 0
 
-        intl.player_x = 320
-
     col_place = place_collide(intl.player, "c")
     if col_place:
+        intl.player_x = 140
+        bg_y = -300
+        intl.inPlace = True
         place_cnt[col_place] += 1
         guage.sub_stress(5)
         guage.add_future(5)
-        intl.player_x = 320
 
 
 # * 보더 이미지를 스프라이트로 만듦
