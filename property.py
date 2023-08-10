@@ -48,30 +48,6 @@ class Guage:
         self.future = 0
         self.health = 100
 
-    def add_stress(self, amount):
-        self.stress += amount
-
-    def add_grade(self, amount):
-        self.grade += amount
-
-    def add_future(self, amount):
-        self.future += amount
-
-    def add_health(self, amount):
-        self.health += amount
-
-    def sub_stress(self, amount):
-        self.stress -= amount
-
-    def sub_grade(self, amount):
-        self.grade -= amount
-
-    def sub_future(self, amount):
-        self.future -= amount
-
-    def sub_health(self, amount):
-        self.health -= amount
-
 
 # * 전역 변수를 관리하기 윈한 싱글톤 클래스
 class ManageVariable:

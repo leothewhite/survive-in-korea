@@ -5,10 +5,10 @@ from property import ManageVariable, Border, Place, Guage
 
 pygame.font.init()
 
-intl = ManageVariable()
+manager = ManageVariable()
 
-intl.bg_y = 0
-intl.isText = False
+manager.bg_y = 0
+manager.isText = False
 place_cnt = {}
 place_now_set = [-1, -1, -1]
 place_idx = 3
@@ -16,6 +16,8 @@ borders = [[], [], [], []]
 guage = Guage()
 gravity = 1
 font = pygame.font.Font("./resources/fonts/NeoDunggeunmoPro-Regular.ttf", 30)
+places = {"a": [], "b": [], "c": []}
+place_now = -1
 
 
 place_timer = pygame.USEREVENT + 0
@@ -24,9 +26,10 @@ text_timer = pygame.USEREVENT + 1
 
 # * 이미지 불러오기
 def load_images():
+    global place_now
     place_path = "./resources/images/place/"
     guage_path = "./resources/images/guage/"
-    intl.images = {
+    manager.images = {
         "player": pygame.image.load("./resources/images/character/player.png"),
         "border": pygame.image.load("./resources/images/background/border.png"),
         "background": pygame.image.load("./resources/images/background/background.png"),
@@ -41,43 +44,44 @@ def load_images():
         },
     }
 
-    for _, v in enumerate(intl.images["place"]):
+    for _, v in enumerate(manager.images["place"]):
         file_name = v[0]
         file = v[1]
-        intl.places[v[0][0]].append(Place(file, file_name[2:], (33, 480), file_name[0]))
+        places[v[0][0]].append(Place(file, file_name[2:], (33, 480), file_name[0]))
         place_cnt[file_name[2:]] = 0
+    place_now = places["a"][0]
 
 
 # * 배경(배경+보더) 움직이기
 def background_manager():
-    global place_idx
-    intl.SCREEN.blit(intl.images["background"], (0, intl.bg_y))
-    intl.SCREEN.blit(intl.images["background"], (0, 640 + intl.bg_y))
+    global place_idx, place_now
+    manager.SCREEN.blit(manager.images["background"], (0, manager.bg_y))
+    manager.SCREEN.blit(manager.images["background"], (0, 640 + manager.bg_y))
     for idx in range(32):
         if 12 <= idx < 16:
             if 2 < place_idx:
                 for i in range(3):
-                    place_now_set[i] = random.choice(intl.places[chr(i + 97)])
+                    place_now_set[i] = random.choice(places[chr(i + 97)])
                 random.shuffle(place_now_set)
-                intl.month += 1
+                manager.month += 1
                 pygame.time.set_timer(text_timer, 2000)
-                intl.isText = True
+                manager.isText = True
                 place_idx = 0
-            intl.place_now = place_now_set[place_idx]
-            intl.place_now.update((31, intl.bg_y + 480))
-            intl.place_now.draw(intl.SCREEN)
+            place_now = place_now_set[place_idx]
+            place_now.update((31, manager.bg_y + 480))
+            place_now.draw(manager.SCREEN)
             for t in range(2, 4):
                 now = borders[t][idx]
-                now.update((now.rect.x, intl.bg_y + idx * 40))
+                now.update((now.rect.x, manager.bg_y + idx * 40))
         else:
             for t in range(4):
                 now = borders[t][idx]
-                now.update((now.rect.x, intl.bg_y + idx * 40))
-    if intl.bg_y <= -480 - 160:
+                now.update((now.rect.x, manager.bg_y + idx * 40))
+    if manager.bg_y <= -480 - 160:
         place_idx += 1
-        intl.bg_y = 0
+        manager.bg_y = 0
 
-    intl.bg_y -= 0.15 * intl.dt
+    manager.bg_y -= 0.15 * manager.dt
 
 
 """
@@ -87,30 +91,30 @@ def background_manager():
 
 
 def guage_manager():
-    intl.SCREEN.blit(intl.images["guage"]["frame"], (525, 440))
-    intl.SCREEN.blit(intl.images["guage"]["frame"], (525, 400))
-    intl.SCREEN.blit(intl.images["guage"]["frame"], (525, 360))
-    intl.SCREEN.blit(intl.images["guage"]["frame"], (525, 320))
+    manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 440))
+    manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 400))
+    manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 360))
+    manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 320))
 
     for i in range(20):
         if guage.health // 5 <= i:
             break
-        intl.SCREEN.blit(intl.images["guage"]["health"], (527 + 5 * i, 322))
+        manager.SCREEN.blit(manager.images["guage"]["health"], (527 + 5 * i, 322))
 
     for i in range(20):
         if guage.future // 5 <= i:
             break
-        intl.SCREEN.blit(intl.images["guage"]["future"], (527 + 5 * i, 362))
+        manager.SCREEN.blit(manager.images["guage"]["future"], (527 + 5 * i, 362))
 
     for i in range(20):
         if guage.stress // 5 <= i:
             break
-        intl.SCREEN.blit(intl.images["guage"]["stress"], (527 + 5 * i, 402))
+        manager.SCREEN.blit(manager.images["guage"]["stress"], (527 + 5 * i, 402))
 
     for i in range(20):
         if guage.grade // 5 <= i:
             break
-        intl.SCREEN.blit(intl.images["guage"]["grade"], (527 + 5 * i, 442))
+        manager.SCREEN.blit(manager.images["guage"]["grade"], (527 + 5 * i, 442))
 
 
 def ending_manager():
@@ -119,7 +123,7 @@ def ending_manager():
     if guage.health == 0:
         return "health"
 
-    if 12 < intl.month:
+    if 12 < manager.month:
         if guage.grade < 30:
             return "grade"
         elif guage.future < 60:
@@ -131,21 +135,34 @@ def ending_manager():
 
 
 # * 입력
-def input_manager(event):
-    if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_LEFT:
-            intl.to_x -= intl.speed * 3 * intl.dt
-            intl.down_left = True
+def event_handler(event):
+    if event.type == place_timer:
+        print("W")
+        manager.inPlace = False
+        manager.player_x = 320
+        manager.player.update((manager.player_x, 240))
+        manager.all_sprites.draw(manager.SCREEN)
+        pygame.time.set_timer(place_timer, 0)
+        manager.bg_y = -440
+    if event.type == text_timer:
+        manager.isText = False
+        pygame.time.set_timer(text_timer, 0)
 
-        if event.key == pygame.K_RIGHT:
-            intl.to_x += intl.speed * 3 * intl.dt
-            intl.down_right = True
+    if not manager.inPlace:
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                manager.to_x -= manager.speed * 3 * manager.dt
+                manager.down_left = True
 
-    if event.type == pygame.KEYUP:
-        if event.key == pygame.K_LEFT:
-            intl.down_left = False
-        if event.key == pygame.K_RIGHT:
-            intl.down_right = False
+            if event.key == pygame.K_RIGHT:
+                manager.to_x += manager.speed * 3 * manager.dt
+                manager.down_right = True
+
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT:
+                manager.down_left = False
+            if event.key == pygame.K_RIGHT:
+                manager.down_right = False
 
 
 # * a 스프라이트가 b 스프라이트 리스트에 부딪혔는가
@@ -155,9 +172,9 @@ def chk_collide(a, b):
 
 # * 플레이어와 (어떤)장소가 충돌했는가를 리턴
 def place_collide(player, place_type):
-    col = chk_collide(player.rect, intl.places[place_type]) + 1
+    col = chk_collide(player.rect, places[place_type]) + 1
     if col:
-        return intl.places[place_type][col - 1].name
+        return places[place_type][col - 1].name
     else:
         return False
 
@@ -165,88 +182,89 @@ def place_collide(player, place_type):
 # * 장소랑 보더의 충돌처리, 그로인한 게이지 변화 (횟수로 인한 변화도 포함)
 def collide_manager():
     if (
-        chk_collide(intl.player.rect, borders[0]) + 1
-        or chk_collide(intl.player.rect, borders[1]) + 1
+        chk_collide(manager.player.rect, borders[0]) + 1
+        or chk_collide(manager.player.rect, borders[1]) + 1
     ):
-        if intl.to_x < 0:
-            intl.to_x = 0
+        if manager.to_x < 0:
+            manager.to_x = 0
     elif (
-        chk_collide(intl.player.rect, borders[2]) + 1
-        or chk_collide(intl.player.rect, borders[3]) + 1
+        chk_collide(manager.player.rect, borders[2]) + 1
+        or chk_collide(manager.player.rect, borders[3]) + 1
     ):
-        if 0 < intl.to_x:
-            intl.to_x = 0
+        if 0 < manager.to_x:
+            manager.to_x = 0
 
-    col_place = place_collide(intl.player, "a")
+    col_place = place_collide(manager.player, "a")
     if col_place:
-        intl.player_x = 140
-        intl.down_left = False
-        intl.down_right = False
+        manager.player_x = 140
+        manager.down_left = False
+        manager.down_right = False
         pygame.time.set_timer(place_timer, 2000)
-        intl.bg_y = -300
-        intl.inPlace = True
+        manager.bg_y = -300
+        manager.inPlace = True
         place_cnt[col_place] += 1
-        guage.sub_stress(5)
+        guage.stress -= 5
 
         if col_place == "alley":
-            guage.sub_health(5)
+            guage.health -= 5
         if col_place == "basketball":
-            guage.add_health(5)
+            guage.health += 5
         if 5 <= place_cnt[col_place]:
-            guage.sub_grade(5)
+            guage.grade -= 5
             place_cnt[col_place] = 0
 
-    col_place = place_collide(intl.player, "b")
+    col_place = place_collide(manager.player, "b")
     if col_place:
-        intl.player_x = 140
-        intl.down_left = False
-        intl.down_right = False
+        manager.player_x = 140
+        manager.down_left = False
+        manager.down_right = False
         pygame.time.set_timer(place_timer, 2000)
-        intl.bg_y = -300
-        intl.inPlace = True
+        manager.bg_y = -300
+        manager.inPlace = True
         place_cnt[col_place] += 1
-        guage.add_stress(5)
-        guage.add_grade(5)
+        guage.stress += 5
+        guage.grade += 5
 
         if 5 <= place_cnt[col_place]:
-            guage.sub_health(5)
+            guage.health -= 5
             place_cnt[col_place] = 0
 
-    col_place = place_collide(intl.player, "c")
+    col_place = place_collide(manager.player, "c")
     if col_place:
-        intl.player_x = 140
-        intl.down_left = False
-        intl.down_right = False
+        manager.player_x = 140
+        manager.down_left = False
+        manager.down_right = False
         pygame.time.set_timer(place_timer, 2000)
-        intl.bg_y = -300
-        intl.inPlace = True
+        manager.bg_y = -300
+        manager.inPlace = True
         place_cnt[col_place] += 1
-        guage.sub_stress(5)
-        guage.add_future(5)
+        guage.stress -= 5
+        guage.future += 5
 
 
 # * 보더 이미지를 스프라이트로 만듦
 def load_border():
     for i in range(32):
         now_y = i * 60
-        intl.block = [
-            Border(intl.images["border"], (171, now_y)),
-            Border(intl.images["border"], (171, 480 + now_y)),
-            Border(intl.images["border"], (456, now_y)),
-            Border(intl.images["border"], (456, 480 + now_y)),
+        manager.block = [
+            Border(manager.images["border"], (171, now_y)),
+            Border(manager.images["border"], (171, 480 + now_y)),
+            Border(manager.images["border"], (456, now_y)),
+            Border(manager.images["border"], (456, 480 + now_y)),
         ]
         for i in range(4):
-            borders[i].append(intl.block[i])
-            intl.all_sprites.add(intl.block[i])
+            borders[i].append(manager.block[i])
+            manager.all_sprites.add(manager.block[i])
 
 
 # * 게이지 값에 따른 중력 값 설정
 def make_gravity():
     global gravity
-    if intl.place_now.type == "a" or intl.place_now.type == "c":
+    print(place_now.type)
+    if place_now.type == "a" or place_now.type == "c":
         gravity = guage.stress / 20
-    elif intl.place_now.type == "b":
+    elif place_now.type == "b":
         gravity = -(guage.stress / 40)
 
-    if intl.place_now.rect.y - 40 <= intl.player.rect.y <= intl.place_now.rect.y + 200:
-        intl.to_x -= gravity
+    if place_now.rect.y - 40 <= manager.player.rect.y <= place_now.rect.y + 200:
+        manager.to_x -= gravity

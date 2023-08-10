@@ -12,7 +12,7 @@ RUNNING = True
 now_scene = "MENU"
 
 while RUNNING:
-    intl.dt = CLOCK.tick(60)
+    manager.dt = CLOCK.tick(60)
 
     if now_scene == "MENU":
         RUNNING, now_scene = menu_scene()
@@ -21,7 +21,6 @@ while RUNNING:
         RUNNING, now_scene = game_scene()
 
     if now_scene[:4] == "OVER":
-        print(now_scene.split()[1])
         RUNNING, now_scene = over_scene(now_scene.split()[1])
 
 pygame.quit()

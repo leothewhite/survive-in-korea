@@ -2,28 +2,26 @@ from property import *
 from manager import *
 
 
-intl = ManageVariable()
+manager = ManageVariable()
 
-intl.player_x = 320
-intl.to_x = 0
-intl.down_left, intl.down_right = False, False
-intl.all_sprites = pygame.sprite.Group()
-intl.SCREEN = pygame.display.set_mode((640, 480))
-intl.speed = 0.2
-intl.places = {"a": [], "b": [], "c": []}
-intl.inPlace = False
-intl.bg_y = 0
-intl.month = 0
+manager.player_x = 320
+manager.to_x = 0
+manager.down_left, manager.down_right = False, False
+manager.all_sprites = pygame.sprite.Group()
+manager.SCREEN = pygame.display.set_mode((640, 480))
+manager.speed = 0.2
+manager.inPlace = False
+manager.bg_y = 0
+manager.month = 0
 
 load_images()
 load_border()
 
 
-intl.player = Character(intl.images["player"])
-intl.place_now = intl.places["a"][0]
+manager.player = Character(manager.images["player"])
 
-intl.player.update((intl.player_x, 240))
-intl.all_sprites.add(intl.player)
+manager.player.update((manager.player_x, 240))
+manager.all_sprites.add(manager.player)
 
 # * 씬 함수들은 RUNNING과 다음 씬을 리턴한다
 
@@ -35,27 +33,15 @@ def game_scene():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
-        if event.type == place_timer:
-            print("W")
-            intl.inPlace = False
-            intl.player_x = 320
-            intl.player.update((intl.player_x, 240))
-            intl.all_sprites.draw(intl.SCREEN)
-            pygame.time.set_timer(place_timer, 0)
-            intl.bg_y = -440
-        if event.type == text_timer:
-            intl.isText = False
-            pygame.time.set_timer(text_timer, 0)
-        if not intl.inPlace:
-            input_manager(event)
+        event_handler(event)
     # * 꾹 누르고 있는 상태 움직임
-    if not intl.inPlace:
-        if intl.down_left:
-            intl.to_x -= intl.speed * intl.dt
-        if intl.down_right:
-            intl.to_x += intl.speed * intl.dt
+    if not manager.inPlace:
+        if manager.down_left:
+            manager.to_x -= manager.speed * manager.dt
+        if manager.down_right:
+            manager.to_x += manager.speed * manager.dt
 
-    if not intl.inPlace:
+    if not manager.inPlace:
         make_gravity()
         collide_manager()
         background_manager()
@@ -63,18 +49,18 @@ def game_scene():
 
     reason = ending_manager()
 
-    if intl.isText:
-        title = font.render(f"{intl.month} 월", True, pygame.Color(0, 0, 0))
-        intl.SCREEN.blit(title, (40, 40))
+    if manager.isText:
+        title = font.render(f"{manager.month} 월", True, pygame.Color(0, 0, 0))
+        manager.SCREEN.blit(title, (40, 40))
     # * 게임 캐릭터가 죽었으면 OVER {reason} 값을 리턴한다
     if reason:
         return True, "OVER" + f" {reason}"
 
-    intl.player_x += intl.to_x
+    manager.player_x += manager.to_x
 
-    intl.player.update((intl.player_x, 240))
-    intl.all_sprites.draw(intl.SCREEN)
-    intl.to_x = 0
+    manager.player.update((manager.player_x, 240))
+    manager.all_sprites.draw(manager.SCREEN)
+    manager.to_x = 0
 
     pygame.display.update()
 
@@ -110,9 +96,9 @@ def menu_scene():
                 print("exit game")
                 return False, "END"
 
-    intl.SCREEN.blit(obj["background"], (0, 0))
+    manager.SCREEN.blit(obj["background"], (0, 0))
 
-    all_sprites.draw(intl.SCREEN)
+    all_sprites.draw(manager.SCREEN)
 
     pygame.display.update()
 
@@ -135,7 +121,7 @@ def over_scene(reason):
         name = i.split(".")[0].split("_")[-1]
         over[name] = pygame.image.load(over_path + i)
 
-    intl.SCREEN.blit(over[reason], (0, 0))
+    manager.SCREEN.blit(over[reason], (0, 0))
 
     pygame.display.update()
 
