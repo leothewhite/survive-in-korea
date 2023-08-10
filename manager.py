@@ -3,19 +3,23 @@ import os
 import pygame
 from property import ManageVariable, Border, Place, Guage
 
+pygame.font.init()
+
 intl = ManageVariable()
 
 intl.bg_y = 0
+intl.isText = False
 place_cnt = {}
 place_now_set = [-1, -1, -1]
 place_idx = 3
 borders = [[], [], [], []]
 guage = Guage()
 gravity = 1
-month = 0
+font = pygame.font.Font("./resources/fonts/NeoDunggeunmoPro-Regular.ttf", 30)
 
 
-timer = pygame.USEREVENT + 0
+place_timer = pygame.USEREVENT + 0
+text_timer = pygame.USEREVENT + 1
 
 
 # * 이미지 불러오기
@@ -46,7 +50,7 @@ def load_images():
 
 # * 배경(배경+보더) 움직이기
 def background_manager():
-    global place_idx, month
+    global place_idx
     intl.SCREEN.blit(intl.images["background"], (0, intl.bg_y))
     intl.SCREEN.blit(intl.images["background"], (0, 640 + intl.bg_y))
     for idx in range(32):
@@ -55,7 +59,9 @@ def background_manager():
                 for i in range(3):
                     place_now_set[i] = random.choice(intl.places[chr(i + 97)])
                 random.shuffle(place_now_set)
-                month += 1
+                intl.month += 1
+                pygame.time.set_timer(text_timer, 2000)
+                intl.isText = True
                 place_idx = 0
             intl.place_now = place_now_set[place_idx]
             intl.place_now.update((31, intl.bg_y + 480))
@@ -113,7 +119,7 @@ def ending_manager():
     if guage.health == 0:
         return "health"
 
-    if 12 < month:
+    if 12 < intl.month:
         return "end"
 
     return False
@@ -171,7 +177,7 @@ def collide_manager():
         intl.player_x = 140
         intl.down_left = False
         intl.down_right = False
-        pygame.time.set_timer(timer, 2000)
+        pygame.time.set_timer(place_timer, 2000)
         intl.bg_y = -300
         intl.inPlace = True
         place_cnt[col_place] += 1
@@ -190,7 +196,7 @@ def collide_manager():
         intl.player_x = 140
         intl.down_left = False
         intl.down_right = False
-        pygame.time.set_timer(timer, 2000)
+        pygame.time.set_timer(place_timer, 2000)
         intl.bg_y = -300
         intl.inPlace = True
         place_cnt[col_place] += 1
@@ -206,7 +212,7 @@ def collide_manager():
         intl.player_x = 140
         intl.down_left = False
         intl.down_right = False
-        pygame.time.set_timer(timer, 2000)
+        pygame.time.set_timer(place_timer, 2000)
         intl.bg_y = -300
         intl.inPlace = True
         place_cnt[col_place] += 1

@@ -13,6 +13,7 @@ intl.speed = 0.2
 intl.places = {"a": [], "b": [], "c": []}
 intl.inPlace = False
 intl.bg_y = 0
+intl.month = 0
 
 load_images()
 load_border()
@@ -34,17 +35,19 @@ def game_scene():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
-        if event.type == timer:
+        if event.type == place_timer:
             print("W")
             intl.inPlace = False
             intl.player_x = 320
             intl.player.update((intl.player_x, 240))
             intl.all_sprites.draw(intl.SCREEN)
-            pygame.time.set_timer(timer, 0)
+            pygame.time.set_timer(place_timer, 0)
             intl.bg_y = -440
+        if event.type == text_timer:
+            intl.isText = False
+            pygame.time.set_timer(text_timer, 0)
         if not intl.inPlace:
             input_manager(event)
-
     # * 꾹 누르고 있는 상태 움직임
     if not intl.inPlace:
         if intl.down_left:
@@ -60,6 +63,9 @@ def game_scene():
 
     reason = ending_manager()
 
+    if intl.isText:
+        title = font.render(f"{intl.month} 월", True, pygame.Color(0, 0, 0))
+        intl.SCREEN.blit(title, (40, 40))
     # * 게임 캐릭터가 죽었으면 OVER {reason} 값을 리턴한다
     if reason:
         return True, "OVER" + f" {reason}"
