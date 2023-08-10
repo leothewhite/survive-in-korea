@@ -128,9 +128,14 @@ def over_scene(reason):
             if event.key == pygame.K_ESCAPE:
                 return True, "MENU"
 
-    over = pygame.image.load("./resources/images/menu/menu_dead.png")
+    over = {}
+    over_path = "./resources/images/menu/ending/"
 
-    intl.SCREEN.blit(over, (0, 0))
+    for i in os.listdir(over_path):
+        name = i.split(".")[0].split("_")[-1]
+        over[name] = pygame.image.load(over_path + i)
+
+    intl.SCREEN.blit(over[reason], (0, 0))
 
     pygame.display.update()
 
