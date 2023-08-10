@@ -18,6 +18,7 @@ gravity = 1
 font = pygame.font.Font("./resources/fonts/NeoDunggeunmoPro-Regular.ttf", 30)
 places = {"a": [], "b": [], "c": []}
 place_now = -1
+down = [False, False]
 
 
 place_timer = pygame.USEREVENT + 0
@@ -136,7 +137,7 @@ def ending_manager():
 
 # * 입력
 def event_handler(event):
-    global bg_y
+    global bg_y, down
     if event.type == place_timer:
         print("W")
         manager.inPlace = False
@@ -153,17 +154,17 @@ def event_handler(event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 manager.to_x -= manager.speed * 3 * manager.dt
-                manager.down_left = True
+                down[0] = True
 
             if event.key == pygame.K_RIGHT:
                 manager.to_x += manager.speed * 3 * manager.dt
-                manager.down_right = True
+                down[1] = True
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
-                manager.down_left = False
+                down[0] = False
             if event.key == pygame.K_RIGHT:
-                manager.down_right = False
+                down[1] = False
 
 
 # * a 스프라이트가 b 스프라이트 리스트에 부딪혔는가
@@ -182,7 +183,7 @@ def place_collide(player, place_type):
 
 # * 장소랑 보더의 충돌처리, 그로인한 게이지 변화 (횟수로 인한 변화도 포함)
 def collide_manager():
-    global bg_y
+    global bg_y, down
     if (
         chk_collide(manager.player.rect, borders[0]) + 1
         or chk_collide(manager.player.rect, borders[1]) + 1
@@ -199,8 +200,7 @@ def collide_manager():
     col_place = place_collide(manager.player, "a")
     if col_place:
         manager.player_x = 140
-        manager.down_left = False
-        manager.down_right = False
+        down = [False, False]
         pygame.time.set_timer(place_timer, 2000)
         bg_y = -300
         manager.inPlace = True
@@ -218,8 +218,7 @@ def collide_manager():
     col_place = place_collide(manager.player, "b")
     if col_place:
         manager.player_x = 140
-        manager.down_left = False
-        manager.down_right = False
+        down = [False, False]
         pygame.time.set_timer(place_timer, 2000)
         manager.bg_y = -300
         manager.inPlace = True
@@ -234,8 +233,7 @@ def collide_manager():
     col_place = place_collide(manager.player, "c")
     if col_place:
         manager.player_x = 140
-        manager.down_left = False
-        manager.down_right = False
+        down = [False, False]
         pygame.time.set_timer(place_timer, 2000)
         manager.bg_y = -300
         manager.inPlace = True
@@ -274,7 +272,7 @@ def make_gravity():
 
 def move_player():
     if not manager.inPlace:
-        if manager.down_left:
+        if down[0]:
             manager.to_x -= manager.speed * manager.dt
-        if manager.down_right:
+        if down[1]:
             manager.to_x += manager.speed * manager.dt

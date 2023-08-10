@@ -6,7 +6,6 @@ manager = ManageVariable()
 
 manager.player_x = 320
 manager.to_x = 0
-manager.down_left, manager.down_right = False, False
 manager.all_sprites = pygame.sprite.Group()
 manager.SCREEN = pygame.display.set_mode((640, 480))
 manager.speed = 0.2
