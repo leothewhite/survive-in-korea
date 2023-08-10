@@ -21,7 +21,6 @@ while RUNNING:
         RUNNING, now_scene = game_scene()
 
     if now_scene[:4] == "OVER":
-        # TODO: 이유마다 다른 game over 씬
         print(now_scene.split()[1])
         RUNNING, now_scene = over_scene(now_scene.split()[1])
 
