@@ -100,23 +100,29 @@ def menu_scene():
 
 
 def over_scene(reason):
+    all_sprites = pygame.sprite.Group()
+    return_menu = Button(pygame.image.load("./resources/images/menu/return.png"))
+    return_menu.update((200, 400))
+    all_sprites.add(return_menu)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = event.pos
+
+            if return_menu.rect.collidepoint(x, y):
                 return True, "MENU"
 
     over = {}
-    over_path = "./resources/images/menu/ending/"
 
+    over_path = "./resources/images/menu/ending/"
     for i in os.listdir(over_path):
         name = i.split(".")[0].split("_")[-1]
         over[name] = pygame.image.load(over_path + i)
 
     manager.SCREEN.blit(over[reason], (0, 0))
-
+    all_sprites.draw(manager.SCREEN)
     pygame.display.update()
 
     return True, "OVER " + reason

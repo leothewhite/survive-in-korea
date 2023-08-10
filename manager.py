@@ -124,7 +124,7 @@ def ending_manager():
     if guage.health == 0:
         return "health"
 
-    if 12 < manager.month:
+    if 1 < manager.month:
         if guage.grade < 30:
             return "grade"
         elif guage.future < 60:
