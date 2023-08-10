@@ -56,10 +56,12 @@ def game_scene():
         make_gravity()
         collide_manager()
         background_manager()
-    isOver, reason = guage_manager()
+        guage_manager()
+
+    reason = ending_manager()
 
     # * 게임 캐릭터가 죽었으면 OVER {reason} 값을 리턴한다
-    if isOver:
+    if reason:
         return True, "OVER" + f" {reason}"
 
     intl.player_x += intl.to_x

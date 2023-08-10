@@ -12,6 +12,8 @@ place_idx = 3
 borders = [[], [], [], []]
 guage = Guage()
 gravity = 1
+month = 0
+
 
 timer = pygame.USEREVENT + 0
 
@@ -44,7 +46,7 @@ def load_images():
 
 # * 배경(배경+보더) 움직이기
 def background_manager():
-    global place_idx
+    global place_idx, month
     intl.SCREEN.blit(intl.images["background"], (0, intl.bg_y))
     intl.SCREEN.blit(intl.images["background"], (0, 640 + intl.bg_y))
     for idx in range(32):
@@ -53,6 +55,7 @@ def background_manager():
                 for i in range(3):
                     place_now_set[i] = random.choice(intl.places[chr(i + 97)])
                 random.shuffle(place_now_set)
+                month += 1
                 place_idx = 0
             intl.place_now = place_now_set[place_idx]
             intl.place_now.update((31, intl.bg_y + 480))
@@ -103,12 +106,17 @@ def guage_manager():
             break
         intl.SCREEN.blit(intl.images["guage"]["grade"], (527 + 5 * i, 442))
 
-    if guage.stress == 100:
-        return True, "stress"
-    if guage.health == 0:
-        return True, "health"
 
-    return False, "ok"
+def ending_manager():
+    if guage.stress == 100:
+        return "stress"
+    if guage.health == 0:
+        return "health"
+
+    if 12 < month:
+        return "end"
+
+    return False
 
 
 # * 입력
