@@ -12,6 +12,7 @@ intl.SCREEN = pygame.display.set_mode((640, 480))
 intl.speed = 0.2
 intl.places = {"a": [], "b": [], "c": []}
 intl.inPlace = False
+intl.bg_y = 0
 
 load_images()
 load_border()
@@ -33,6 +34,14 @@ def game_scene():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
+        if event.type == timer:
+            print("W")
+            intl.inPlace = False
+            intl.player_x = 320
+            intl.player.update((intl.player_x, 240))
+            intl.all_sprites.draw(intl.SCREEN)
+            pygame.time.set_timer(timer, 0)
+            intl.bg_y = -440
         if not intl.inPlace:
             input_manager(event)
 

@@ -5,13 +5,15 @@ from property import ManageVariable, Border, Place, Guage
 
 intl = ManageVariable()
 
-bg_y = 0
+intl.bg_y = 0
 place_cnt = {}
 place_now_set = [-1, -1, -1]
 place_idx = 3
 borders = [[], [], [], []]
 guage = Guage()
 gravity = 1
+
+timer = pygame.USEREVENT + 0
 
 
 # * 이미지 불러오기
@@ -42,9 +44,9 @@ def load_images():
 
 # * 배경(배경+보더) 움직이기
 def background_manager():
-    global bg_y, place_idx
-    intl.SCREEN.blit(intl.images["background"], (0, bg_y))
-    intl.SCREEN.blit(intl.images["background"], (0, 640 + bg_y))
+    global place_idx
+    intl.SCREEN.blit(intl.images["background"], (0, intl.bg_y))
+    intl.SCREEN.blit(intl.images["background"], (0, 640 + intl.bg_y))
     for idx in range(32):
         if 12 <= idx < 16:
             if 2 < place_idx:
@@ -53,20 +55,20 @@ def background_manager():
                 random.shuffle(place_now_set)
                 place_idx = 0
             intl.place_now = place_now_set[place_idx]
-            intl.place_now.update((31, bg_y + 480))
+            intl.place_now.update((31, intl.bg_y + 480))
             intl.place_now.draw(intl.SCREEN)
             for t in range(2, 4):
                 now = borders[t][idx]
-                now.update((now.rect.x, bg_y + idx * 40))
+                now.update((now.rect.x, intl.bg_y + idx * 40))
         else:
             for t in range(4):
                 now = borders[t][idx]
-                now.update((now.rect.x, bg_y + idx * 40))
-    if bg_y <= -480 - 160:
+                now.update((now.rect.x, intl.bg_y + idx * 40))
+    if intl.bg_y <= -480 - 160:
         place_idx += 1
-        bg_y = 0
+        intl.bg_y = 0
 
-    bg_y -= 0.15 * intl.dt
+    intl.bg_y -= 0.15 * intl.dt
 
 
 """
@@ -143,7 +145,6 @@ def place_collide(player, place_type):
 
 # * 장소랑 보더의 충돌처리, 그로인한 게이지 변화 (횟수로 인한 변화도 포함)
 def collide_manager():
-    global bg_y
     if (
         chk_collide(intl.player.rect, borders[0]) + 1
         or chk_collide(intl.player.rect, borders[1]) + 1
@@ -160,7 +161,10 @@ def collide_manager():
     col_place = place_collide(intl.player, "a")
     if col_place:
         intl.player_x = 140
-        bg_y = -300
+        intl.down_left = False
+        intl.down_right = False
+        pygame.time.set_timer(timer, 2000)
+        intl.bg_y = -300
         intl.inPlace = True
         place_cnt[col_place] += 1
         guage.sub_stress(5)
@@ -176,7 +180,10 @@ def collide_manager():
     col_place = place_collide(intl.player, "b")
     if col_place:
         intl.player_x = 140
-        bg_y = -300
+        intl.down_left = False
+        intl.down_right = False
+        pygame.time.set_timer(timer, 2000)
+        intl.bg_y = -300
         intl.inPlace = True
         place_cnt[col_place] += 1
         guage.add_stress(5)
@@ -189,7 +196,10 @@ def collide_manager():
     col_place = place_collide(intl.player, "c")
     if col_place:
         intl.player_x = 140
-        bg_y = -300
+        intl.down_left = False
+        intl.down_right = False
+        pygame.time.set_timer(timer, 2000)
+        intl.bg_y = -300
         intl.inPlace = True
         place_cnt[col_place] += 1
         guage.sub_stress(5)
