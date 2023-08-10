@@ -7,7 +7,7 @@ pygame.font.init()
 
 manager = ManageVariable()
 
-manager.bg_y = 0
+bg_y = 0
 manager.isText = False
 place_cnt = {}
 place_now_set = [-1, -1, -1]
@@ -54,9 +54,9 @@ def load_images():
 
 # * 배경(배경+보더) 움직이기
 def background_manager():
-    global place_idx, place_now
-    manager.SCREEN.blit(manager.images["background"], (0, manager.bg_y))
-    manager.SCREEN.blit(manager.images["background"], (0, 640 + manager.bg_y))
+    global place_idx, place_now, bg_y
+    manager.SCREEN.blit(manager.images["background"], (0, bg_y))
+    manager.SCREEN.blit(manager.images["background"], (0, 640 + bg_y))
     for idx in range(32):
         if 12 <= idx < 16:
             if 2 < place_idx:
@@ -68,20 +68,20 @@ def background_manager():
                 manager.isText = True
                 place_idx = 0
             place_now = place_now_set[place_idx]
-            place_now.update((31, manager.bg_y + 480))
+            place_now.update((31, bg_y + 480))
             place_now.draw(manager.SCREEN)
             for t in range(2, 4):
                 now = borders[t][idx]
-                now.update((now.rect.x, manager.bg_y + idx * 40))
+                now.update((now.rect.x, bg_y + idx * 40))
         else:
             for t in range(4):
                 now = borders[t][idx]
-                now.update((now.rect.x, manager.bg_y + idx * 40))
-    if manager.bg_y <= -480 - 160:
+                now.update((now.rect.x, bg_y + idx * 40))
+    if bg_y <= -480 - 160:
         place_idx += 1
-        manager.bg_y = 0
+        bg_y = 0
 
-    manager.bg_y -= 0.15 * manager.dt
+    bg_y -= 0.15 * manager.dt
 
 
 """
@@ -136,6 +136,7 @@ def ending_manager():
 
 # * 입력
 def event_handler(event):
+    global bg_y
     if event.type == place_timer:
         print("W")
         manager.inPlace = False
@@ -143,7 +144,7 @@ def event_handler(event):
         manager.player.update((manager.player_x, 240))
         manager.all_sprites.draw(manager.SCREEN)
         pygame.time.set_timer(place_timer, 0)
-        manager.bg_y = -440
+        bg_y = -440
     if event.type == text_timer:
         manager.isText = False
         pygame.time.set_timer(text_timer, 0)
@@ -181,6 +182,7 @@ def place_collide(player, place_type):
 
 # * 장소랑 보더의 충돌처리, 그로인한 게이지 변화 (횟수로 인한 변화도 포함)
 def collide_manager():
+    global bg_y
     if (
         chk_collide(manager.player.rect, borders[0]) + 1
         or chk_collide(manager.player.rect, borders[1]) + 1
@@ -200,7 +202,7 @@ def collide_manager():
         manager.down_left = False
         manager.down_right = False
         pygame.time.set_timer(place_timer, 2000)
-        manager.bg_y = -300
+        bg_y = -300
         manager.inPlace = True
         place_cnt[col_place] += 1
         guage.stress -= 5

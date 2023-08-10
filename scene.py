@@ -11,7 +11,6 @@ manager.all_sprites = pygame.sprite.Group()
 manager.SCREEN = pygame.display.set_mode((640, 480))
 manager.speed = 0.2
 manager.inPlace = False
-manager.bg_y = 0
 manager.month = 0
 
 load_images()
