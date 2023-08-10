@@ -34,11 +34,7 @@ def game_scene():
             return False, "END"
         event_handler(event)
     # * 꾹 누르고 있는 상태 움직임
-    if not manager.inPlace:
-        if manager.down_left:
-            manager.to_x -= manager.speed * manager.dt
-        if manager.down_right:
-            manager.to_x += manager.speed * manager.dt
+    move_player()
 
     if not manager.inPlace:
         make_gravity()

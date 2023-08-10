@@ -270,3 +270,11 @@ def make_gravity():
 
     if place_now.rect.y - 40 <= manager.player.rect.y <= place_now.rect.y + 200:
         manager.to_x -= gravity
+
+
+def move_player():
+    if not manager.inPlace:
+        if manager.down_left:
+            manager.to_x -= manager.speed * manager.dt
+        if manager.down_right:
+            manager.to_x += manager.speed * manager.dt
