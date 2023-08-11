@@ -19,7 +19,7 @@ font = pygame.font.Font("./resources/fonts/NeoDunggeunmoPro-Regular.ttf", 30)
 places = {"a": [], "b": [], "c": []}
 place_now = -1
 down = [False, False]
-
+now_place_cnt = 0
 
 place_timer = pygame.USEREVENT + 0
 text_timer = pygame.USEREVENT + 1
@@ -55,12 +55,15 @@ def load_images():
 
 # * 배경(배경+보더) 움직이기
 def background_manager():
+    global now_place_cnt
     global place_idx, place_now, bg_y
     manager.SCREEN.blit(manager.images["background"], (0, bg_y))
     manager.SCREEN.blit(manager.images["background"], (0, 640 + bg_y))
     for idx in range(32):
         if 12 <= idx < 16:
             if 2 < place_idx:
+                if 3 == now_place_cnt:
+                    guage.health -= 10
                 for i in range(3):
                     place_now_set[i] = random.choice(places[chr(i + 97)])
                 random.shuffle(place_now_set)
@@ -68,6 +71,7 @@ def background_manager():
                 pygame.time.set_timer(text_timer, 2000)
                 manager.isText = True
                 place_idx = 0
+                now_place_cnt = 0
             place_now = place_now_set[place_idx]
             place_now.update((31, bg_y + 480))
             place_now.draw(manager.SCREEN)
@@ -187,7 +191,7 @@ def place_collide(player, place_type):
 
 # * 장소랑 보더의 충돌처리, 그로인한 게이지 변화 (횟수로 인한 변화도 포함)
 def collide_manager():
-    global bg_y, down
+    global bg_y, down, now_place_cnt
     if (
         chk_collide(manager.player.rect, borders[0]) + 1
         or chk_collide(manager.player.rect, borders[1]) + 1
@@ -210,7 +214,7 @@ def collide_manager():
         manager.inPlace = True
         place_cnt[col_place] += 1
         guage.stress -= 5
-
+        now_place_cnt += 1
         if col_place == "alley":
             guage.health -= 5
         if col_place == "basketball":
@@ -229,6 +233,7 @@ def collide_manager():
         place_cnt[col_place] += 1
         guage.stress += 10
         guage.grade += 5
+        now_place_cnt += 1
 
         if 5 <= place_cnt[col_place]:
             guage.health -= 5
@@ -243,6 +248,7 @@ def collide_manager():
         manager.inPlace = True
         place_cnt[col_place] += 1
         guage.future += 5
+        now_place_cnt += 1
 
 
 # * 보더 이미지를 스프라이트로 만듦
