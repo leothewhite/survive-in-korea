@@ -21,8 +21,8 @@ place_now = -1
 down = [False, False]
 now_place_cnt = 0
 
-place_timer = pygame.USEREVENT + 0
-text_timer = pygame.USEREVENT + 1
+place_timer = pygame.USEREVENT + 1
+text_timer = pygame.USEREVENT + 2
 
 
 # * 이미지 불러오기
@@ -68,7 +68,7 @@ def background_manager():
                     place_now_set[i] = random.choice(places[chr(i + 97)])
                 random.shuffle(place_now_set)
                 manager.month += 1
-                pygame.time.set_timer(text_timer, 2000)
+                pygame.time.set_timer(text_timer, 1000)
                 manager.isText = True
                 place_idx = 0
                 now_place_cnt = 0
@@ -155,8 +155,14 @@ def event_handler(event):
         pygame.time.set_timer(place_timer, 0)
         bg_y = -440
     if event.type == text_timer:
-        manager.isText = False
         pygame.time.set_timer(text_timer, 0)
+        manager.now_alpha -= 1 * manager.dt
+
+    if manager.now_alpha != 255:
+        manager.now_alpha -= 1 * manager.dt
+        if manager.now_alpha <= 0:
+            manager.isText = False
+            manager.now_alpha = 255
 
     if not manager.inPlace:
         if event.type == pygame.KEYDOWN:

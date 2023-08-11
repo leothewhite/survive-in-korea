@@ -11,6 +11,7 @@ manager.SCREEN = pygame.display.set_mode((640, 480))
 manager.speed = 0.2
 manager.inPlace = False
 manager.month = 0
+manager.now_alpha = 255
 
 load_images()
 load_border()
@@ -45,6 +46,7 @@ def game_scene():
 
     if manager.isText:
         title = font.render(f"{manager.month} 월", True, pygame.Color(0, 0, 0))
+        title.set_alpha(manager.now_alpha)
         manager.SCREEN.blit(title, (40, 40))
     # * 게임 캐릭터가 죽었으면 OVER {reason} 값을 리턴한다
     if reason:
