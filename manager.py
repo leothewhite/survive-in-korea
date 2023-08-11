@@ -225,7 +225,7 @@ def collide_manager():
         manager.player_x = 140
         down = [False, False]
         pygame.time.set_timer(place_timer, 2000)
-        manager.bg_y = -300
+        bg_y = -300
         manager.inPlace = True
         place_cnt[col_place] += 1
         guage.stress += 5
@@ -240,7 +240,7 @@ def collide_manager():
         manager.player_x = 140
         down = [False, False]
         pygame.time.set_timer(place_timer, 2000)
-        manager.bg_y = -300
+        bg_y = -300
         manager.inPlace = True
         place_cnt[col_place] += 1
         guage.stress -= 5
