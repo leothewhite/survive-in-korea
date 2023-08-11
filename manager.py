@@ -124,7 +124,7 @@ def ending_manager():
     if guage.health == 0:
         return "health"
 
-    if 1 < manager.month:
+    if 12 < manager.month:
         if guage.grade < 30:
             return "grade"
         elif guage.future < 60:
@@ -139,7 +139,6 @@ def ending_manager():
 def event_handler(event):
     global bg_y, down
     if event.type == place_timer:
-        print("W")
         manager.inPlace = False
         manager.player_x = 320
         manager.player.update((manager.player_x, 240))
@@ -260,7 +259,6 @@ def load_border():
 # * 게이지 값에 따른 중력 값 설정
 def make_gravity():
     global gravity
-    print(place_now.type)
     if place_now.type == "a" or place_now.type == "c":
         gravity = guage.stress / 20
     elif place_now.type == "b":
