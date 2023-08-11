@@ -121,7 +121,6 @@ def guage_manager():
     guage.health = pygame.math.clamp(guage.health, 0, 100)
     guage.grade = pygame.math.clamp(guage.grade, 0, 100)
     guage.future = pygame.math.clamp(guage.future, 0, 100)
-    print(guage.stress, guage.health, guage.grade, guage.future)
 
 
 def ending_manager():
@@ -228,7 +227,7 @@ def collide_manager():
         bg_y = -300
         manager.inPlace = True
         place_cnt[col_place] += 1
-        guage.stress += 5
+        guage.stress += 10
         guage.grade += 5
 
         if 5 <= place_cnt[col_place]:
@@ -243,7 +242,6 @@ def collide_manager():
         bg_y = -300
         manager.inPlace = True
         place_cnt[col_place] += 1
-        guage.stress -= 5
         guage.future += 5
 
 
@@ -266,9 +264,9 @@ def load_border():
 def make_gravity():
     global gravity
     if place_now.type == "a" or place_now.type == "c":
-        gravity = guage.stress / 20
+        gravity = guage.stress / 10
     elif place_now.type == "b":
-        gravity = -(guage.stress / 40)
+        gravity = -(guage.stress / 10)
 
     if place_now.rect.y - 40 <= manager.player.rect.y <= place_now.rect.y + 200:
         manager.to_x -= gravity
