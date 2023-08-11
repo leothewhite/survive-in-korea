@@ -117,6 +117,12 @@ def guage_manager():
             break
         manager.SCREEN.blit(manager.images["guage"]["grade"], (527 + 5 * i, 442))
 
+    guage.stress = pygame.math.clamp(guage.stress, 0, 100)
+    guage.health = pygame.math.clamp(guage.health, 0, 100)
+    guage.grade = pygame.math.clamp(guage.grade, 0, 100)
+    guage.future = pygame.math.clamp(guage.future, 0, 100)
+    print(guage.stress, guage.health, guage.grade, guage.future)
+
 
 def ending_manager():
     if guage.stress == 100:
