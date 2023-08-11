@@ -67,13 +67,18 @@ def menu_scene():
         "background": pygame.image.load("./resources/images/menu/menu_background.png"),
         "start": Button(pygame.image.load("./resources/images/menu/game_start.png")),
         "exit": Button(pygame.image.load("./resources/images/menu/game_exit.png")),
+        "tutorial": Button(
+            pygame.image.load("./resources/images/menu/game_tutorial.png")
+        ),
     }
 
     obj["start"].update((200, 200))
     obj["exit"].update((200, 260))
+    obj["tutorial"].update((200, 320))
 
     all_sprites.add(obj["start"])
     all_sprites.add(obj["exit"])
+    all_sprites.add(obj["tutorial"])
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -89,6 +94,9 @@ def menu_scene():
             if obj["exit"].rect.collidepoint(x, y):
                 print("exit game")
                 return False, "END"
+            if obj["tutorial"].rect.collidepoint(x, y):
+                print("tutorial")
+                return False, "TUTORIAL"
 
     manager.SCREEN.blit(obj["background"], (0, 0))
 
@@ -126,3 +134,40 @@ def over_scene(reason):
     pygame.display.update()
 
     return True, "OVER " + reason
+
+
+clicked = 0
+
+
+def tutorial_scene():
+    global clicked
+    all_sprites = pygame.sprite.Group()
+    keyboard_tutorial = pygame.image.load(
+        "./resources/images/menu/tutorial_keyboard.png"
+    )
+    guage_tutorial = pygame.image.load("./resources/images/menu/tutorial_guage.png")
+
+    if clicked == 0:
+        manager.SCREEN.blit(keyboard_tutorial, (0, 0))
+    elif clicked == 1:
+        manager.SCREEN.blit(guage_tutorial, (0, 0))
+    else:
+        return True, "MENU"
+
+    next_button = Button(pygame.image.load("./resources/images/menu/button_next.png"))
+    next_button.update((500, 30))
+    all_sprites.add(next_button)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            return False, "END"
+
+        #  * 마우스 버튼 클릭
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = event.pos
+
+            if next_button.rect.collidepoint(x, y):
+                clicked += 1
+
+    all_sprites.draw(manager.SCREEN)
+    pygame.display.update()
+    return True, "TUTORIAL"

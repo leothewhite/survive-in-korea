@@ -2,7 +2,7 @@ import pygame
 
 from property import *
 from manager import *
-from scene import game_scene, menu_scene, over_scene
+from scene import *
 
 pygame.init()
 
@@ -22,5 +22,8 @@ while RUNNING:
 
     if now_scene[:4] == "OVER":
         RUNNING, now_scene = over_scene(now_scene.split()[1])
+
+    if now_scene == "TUTORIAL":
+        RUNNING, now_scene = tutorial_scene()
 
 pygame.quit()
