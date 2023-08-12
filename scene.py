@@ -27,9 +27,13 @@ manager.all_sprites.add(manager.player)
 
 isOver = False
 
+place_now = -1
+
 
 def game_scene():
-    global isOver
+    global isOver, place_now
+    manager.SCREEN.blit(manager.images["background"], (0, manager.bg_y))
+    manager.SCREEN.blit(manager.images["background"], (0, 640 + manager.bg_y))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
@@ -40,10 +44,11 @@ def game_scene():
     if not manager.inPlace:
         make_gravity()
         collide_manager()
-        background_manager()
+        place_now = background_manager()
         guage_manager()
 
     reason = ending_manager()
+    place_now.draw(manager.SCREEN)
 
     # * 게임 캐릭터가 죽었으면 OVER {reason} 값을 리턴한다
     if reason:
@@ -55,6 +60,32 @@ def game_scene():
     manager.all_sprites.draw(manager.SCREEN)
     if manager.title != -1:
         manager.SCREEN.blit(manager.title, (40, 40))
+
+    manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 440))
+    manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 400))
+    manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 360))
+    manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 320))
+
+    for i in range(20):
+        if guage.health // 5 <= i:
+            break
+        manager.SCREEN.blit(manager.images["guage"]["health"], (527 + 5 * i, 322))
+
+    for i in range(20):
+        if guage.future // 5 <= i:
+            break
+        manager.SCREEN.blit(manager.images["guage"]["future"], (527 + 5 * i, 362))
+
+    for i in range(20):
+        if guage.stress // 5 <= i:
+            break
+        manager.SCREEN.blit(manager.images["guage"]["stress"], (527 + 5 * i, 402))
+
+    for i in range(20):
+        if guage.grade // 5 <= i:
+            break
+        manager.SCREEN.blit(manager.images["guage"]["grade"], (527 + 5 * i, 442))
+
     manager.to_x = 0
 
     pygame.display.update()
