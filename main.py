@@ -1,29 +1,29 @@
 import pygame
-# from play import game_play
+
+from property import *
+from manager import *
+from scene import *
+
 pygame.init()
 
-width = 640
-height = 480
-screen = pygame.display.set_mode((width, height))
-bg = pygame.image.load("./resources/images/background/background.png")
-clock = pygame.time.Clock()
-running = True
-i = 0
+CLOCK = pygame.time.Clock()
+RUNNING = True
 
-while running:
-    dt = clock.tick(60)
-    print(f"fps: {dt}")
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    # 참고: https://www.askpython.com/python-modules/pygame-looping-background
-    screen.blit(bg, (0, i))
-    screen.blit(bg, (0, height+i))
-    if (i <= -height+1):
-        i = 0
-    # 속도
-    i -= 0.2*dt
+now_scene = "MENU"
 
-    pygame.display.update()
+while RUNNING:
+    manager.dt = CLOCK.tick(60)
+
+    if now_scene == "MENU":
+        RUNNING, now_scene = menu_scene()
+
+    if now_scene == "GAME":
+        RUNNING, now_scene = game_scene()
+
+    if now_scene[:4] == "OVER":
+        RUNNING, now_scene = over_scene(now_scene.split()[1])
+
+    if now_scene == "TUTORIAL":
+        RUNNING, now_scene = tutorial_scene()
 
 pygame.quit()
