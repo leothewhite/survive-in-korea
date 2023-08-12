@@ -7,8 +7,7 @@ pygame.font.init()
 
 manager = ManageVariable()
 
-manager.bg_y = 0
-manager.isText = False
+
 place_cnt = {}
 place_now_set = [-1, -1, -1]
 place_idx = 3
@@ -22,7 +21,6 @@ down = [False, False]
 now_place_cnt = 0
 
 place_timer = pygame.USEREVENT + 1
-text_timer = pygame.USEREVENT + 2
 
 
 # * 이미지 불러오기
@@ -57,8 +55,6 @@ def load_images():
 def background_manager():
     global now_place_cnt
     global place_idx, place_now
-    # manager.SCREEN.blit(manager.images["background"], (0, bg_y))
-    # manager.SCREEN.blit(manager.images["background"], (0, 640 + bg_y))
     for idx in range(32):
         if 12 <= idx < 16:
             if 2 < place_idx:
@@ -66,14 +62,18 @@ def background_manager():
                     guage.health -= 10
                 for i in range(3):
                     place_now_set[i] = random.choice(places[chr(i + 97)])
+
                 random.shuffle(place_now_set)
+                place_idx = 0
+                now_place_cnt = 0
+
                 manager.month += 1
                 manager.isText = 1
                 manager.now_alpha += manager.dt
-                place_idx = 0
-                now_place_cnt = 0
+
             place_now = place_now_set[place_idx]
             place_now.update((31, manager.bg_y + 480))
+
             for t in range(2, 4):
                 now = borders[t][idx]
                 now.update((now.rect.x, manager.bg_y + idx * 40))
@@ -81,6 +81,7 @@ def background_manager():
             for t in range(4):
                 now = borders[t][idx]
                 now.update((now.rect.x, manager.bg_y + idx * 40))
+
     if manager.bg_y <= -480 - 160:
         place_idx += 1
         manager.bg_y = 0
@@ -88,19 +89,6 @@ def background_manager():
     manager.bg_y -= 0.15 * manager.dt
 
     return place_now
-
-
-"""
-* guage 그리기, guage로 인한 게임 오버 처리
-* 만약 게임 오버 될 시 True와 reason 값을 반환
-"""
-
-
-def guage_manager():
-    guage.stress = pygame.math.clamp(guage.stress, 0, 100)
-    guage.health = pygame.math.clamp(guage.health, 0, 100)
-    guage.grade = pygame.math.clamp(guage.grade, 0, 100)
-    guage.future = pygame.math.clamp(guage.future, 0, 100)
 
 
 def ending_manager():
@@ -130,9 +118,6 @@ def event_handler(event):
         manager.all_sprites.draw(manager.SCREEN)
         pygame.time.set_timer(place_timer, 0)
         manager.bg_y = -440
-    # if event.type == text_timer:
-    #     pygame.time.set_timer(text_timer, 0)
-    #     manager.now_alpha += manager.dt
 
     if not manager.inPlace:
         if event.type == pygame.KEYDOWN:
@@ -152,45 +137,22 @@ def event_handler(event):
 
 
 # * a 스프라이트가 b 스프라이트 리스트에 부딪혔는가
-def chk_collide(a, b):
+def is_collided(a, b):
     return pygame.Rect.collidelist(a, b)
 
 
 # * 플레이어와 (어떤)장소가 충돌했는가를 리턴
-def place_collide(player, place_type):
-    col = chk_collide(player.rect, places[place_type]) + 1
+def list_collided(player, place_type):
+    col = is_collided(player.rect, places[place_type]) + 1
     if col:
         return places[place_type][col - 1].name
     else:
         return False
 
 
-# * 장소랑 보더의 충돌처리, 그로인한 게이지 변화 (횟수로 인한 변화도 포함)
-def collide_manager():
-    global down, now_place_cnt
-    if (
-        chk_collide(manager.player.rect, borders[0]) + 1
-        or chk_collide(manager.player.rect, borders[1]) + 1
-    ):
-        if manager.to_x < 0:
-            manager.to_x = 0
-    elif (
-        chk_collide(manager.player.rect, borders[2]) + 1
-        or chk_collide(manager.player.rect, borders[3]) + 1
-    ):
-        if 0 < manager.to_x:
-            manager.to_x = 0
-
-    col_place = place_collide(manager.player, "a")
-    if col_place:
-        manager.player_x = 140
-        down = [False, False]
-        pygame.time.set_timer(place_timer, 2000)
-        manager.bg_y = -300
-        manager.inPlace = True
-        place_cnt[col_place] += 1
+def guage_manager(place_type, col_place):
+    if place_type == "a":
         guage.stress -= 5
-        now_place_cnt += 1
         if col_place == "alley":
             guage.health -= 5
         if col_place == "basketball":
@@ -199,32 +161,34 @@ def collide_manager():
             guage.grade -= 5
             place_cnt[col_place] = 0
 
-    col_place = place_collide(manager.player, "b")
-    if col_place:
-        manager.player_x = 140
-        down = [False, False]
-        pygame.time.set_timer(place_timer, 2000)
-        manager.bg_y = -300
-        manager.inPlace = True
-        place_cnt[col_place] += 1
+    if place_type == "b":
         guage.stress += 10
         guage.grade += 5
-        now_place_cnt += 1
-
         if 5 <= place_cnt[col_place]:
             guage.health -= 5
             place_cnt[col_place] = 0
 
-    col_place = place_collide(manager.player, "c")
-    if col_place:
-        manager.player_x = 140
-        down = [False, False]
-        pygame.time.set_timer(place_timer, 2000)
-        manager.bg_y = -300
-        manager.inPlace = True
-        place_cnt[col_place] += 1
+    if place_type == "c":
         guage.future += 10
-        now_place_cnt += 1
+
+
+# * 장소와의 충돌처리, 그로인한 게이지 변화 (횟수로 인한 변화도 포함)
+def collide_manager():
+    global down, now_place_cnt
+
+    for key in places:
+        col_place = list_collided(manager.player, key)
+
+        if col_place:
+            manager.player_x = 140
+            down = [False, False]
+            pygame.time.set_timer(place_timer, 2000)
+            manager.bg_y = -300
+            manager.inPlace = True
+            place_cnt[col_place] += 1
+            now_place_cnt += 1
+
+            guage_manager(key, col_place)
 
 
 # * 보더 이미지를 스프라이트로 만듦
@@ -254,6 +218,7 @@ def make_gravity():
         manager.to_x -= gravity
 
 
+# 키를 누르는 중에 플레이어를 움직임
 def move_player():
     if not manager.inPlace:
         if down[0]:
@@ -262,8 +227,8 @@ def move_player():
             manager.to_x += manager.speed * manager.dt
 
 
+# 텍스트 나타나고 없어지기
 def text_handler():
-    print(manager.isText)
     if manager.now_alpha != 0:
         if manager.isText == 1:
             manager.now_alpha += 1 * manager.dt
@@ -279,3 +244,22 @@ def text_handler():
     if manager.isText == 1 or manager.isText == 2:
         manager.title = font.render(f"{manager.month} 월", True, pygame.Color(0, 0, 0))
         manager.title.set_alpha(manager.now_alpha)
+
+
+def draw_guage():
+    for i in range(4):
+        manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 320 + 40 * i))
+
+    guage.stress = pygame.math.clamp(guage.stress, 0, 100)
+    guage.health = pygame.math.clamp(guage.health, 0, 100)
+    guage.grade = pygame.math.clamp(guage.grade, 0, 100)
+    guage.future = pygame.math.clamp(guage.future, 0, 100)
+    for i in range(20):
+        if i < guage.health // 5:
+            manager.SCREEN.blit(manager.images["guage"]["health"], (527 + 5 * i, 322))
+        if i < guage.future // 5:
+            manager.SCREEN.blit(manager.images["guage"]["future"], (527 + 5 * i, 362))
+        if i < guage.stress // 5:
+            manager.SCREEN.blit(manager.images["guage"]["stress"], (527 + 5 * i, 402))
+        if i < guage.grade // 5:
+            manager.SCREEN.blit(manager.images["guage"]["grade"], (527 + 5 * i, 442))

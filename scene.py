@@ -13,6 +13,8 @@ manager.inPlace = False
 manager.month = 0
 manager.now_alpha = 0
 manager.title = -1
+manager.bg_y = 0
+manager.isText = False
 
 load_images()
 load_border()
@@ -45,7 +47,6 @@ def game_scene():
         make_gravity()
         collide_manager()
         place_now = background_manager()
-        guage_manager()
 
     reason = ending_manager()
     place_now.draw(manager.SCREEN)
@@ -56,35 +57,16 @@ def game_scene():
 
     manager.player_x += manager.to_x
 
+    if not -400 <= manager.bg_y <= -240:
+        manager.player_x = pygame.math.clamp(manager.player_x, 191, 415)
     manager.player.update((manager.player_x, 240))
+
     manager.all_sprites.draw(manager.SCREEN)
+
     if manager.title != -1:
         manager.SCREEN.blit(manager.title, (40, 40))
 
-    manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 440))
-    manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 400))
-    manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 360))
-    manager.SCREEN.blit(manager.images["guage"]["frame"], (525, 320))
-
-    for i in range(20):
-        if guage.health // 5 <= i:
-            break
-        manager.SCREEN.blit(manager.images["guage"]["health"], (527 + 5 * i, 322))
-
-    for i in range(20):
-        if guage.future // 5 <= i:
-            break
-        manager.SCREEN.blit(manager.images["guage"]["future"], (527 + 5 * i, 362))
-
-    for i in range(20):
-        if guage.stress // 5 <= i:
-            break
-        manager.SCREEN.blit(manager.images["guage"]["stress"], (527 + 5 * i, 402))
-
-    for i in range(20):
-        if guage.grade // 5 <= i:
-            break
-        manager.SCREEN.blit(manager.images["guage"]["grade"], (527 + 5 * i, 442))
+    draw_guage()
 
     manager.to_x = 0
 
