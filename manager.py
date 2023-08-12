@@ -24,17 +24,6 @@ now_place_cnt = 0
 place_timer = pygame.USEREVENT + 1
 text_timer = pygame.USEREVENT + 2
 
-# TODO 타이머 사용 안하고 fade out 구현 (아마 fade in 한다음 바로 fade out 하면 됨)
-# TODO 키보드로 메뉴 버튼 조정
-# TODO 게이지 옆에 게이지 이름
-"""
-TODO 마지막 테스트
-* 엔딩 모두 확인
-* 콜리션 버그 확인
-* 게이지 밸런스 조절
-* 중력 밸런스 조절
-"""
-
 
 # * 이미지 불러오기
 def load_images():
@@ -234,7 +223,7 @@ def collide_manager():
         manager.bg_y = -300
         manager.inPlace = True
         place_cnt[col_place] += 1
-        guage.future += 5
+        guage.future += 10
         now_place_cnt += 1
 
 
