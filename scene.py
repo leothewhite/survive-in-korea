@@ -11,7 +11,8 @@ manager.SCREEN = pygame.display.set_mode((640, 480))
 manager.speed = 0.2
 manager.inPlace = False
 manager.month = 0
-manager.now_alpha = 255
+manager.now_alpha = 0
+manager.title = -1
 
 load_images()
 load_border()
@@ -35,7 +36,7 @@ def game_scene():
         event_handler(event)
     # * 꾹 누르고 있는 상태 움직임
     move_player()
-
+    text_handler()
     if not manager.inPlace:
         make_gravity()
         collide_manager()
@@ -44,10 +45,6 @@ def game_scene():
 
     reason = ending_manager()
 
-    if manager.isText:
-        title = font.render(f"{manager.month} 월", True, pygame.Color(0, 0, 0))
-        title.set_alpha(manager.now_alpha)
-        manager.SCREEN.blit(title, (40, 40))
     # * 게임 캐릭터가 죽었으면 OVER {reason} 값을 리턴한다
     if reason:
         return True, "OVER" + f" {reason}"
@@ -56,6 +53,8 @@ def game_scene():
 
     manager.player.update((manager.player_x, 240))
     manager.all_sprites.draw(manager.SCREEN)
+    if manager.title != -1:
+        manager.SCREEN.blit(manager.title, (40, 40))
     manager.to_x = 0
 
     pygame.display.update()

@@ -24,6 +24,17 @@ now_place_cnt = 0
 place_timer = pygame.USEREVENT + 1
 text_timer = pygame.USEREVENT + 2
 
+# TODO 타이머 사용 안하고 fade out 구현 (아마 fade in 한다음 바로 fade out 하면 됨)
+# TODO 키보드로 메뉴 버튼 조정
+# TODO 게이지 옆에 게이지 이름
+"""
+TODO 마지막 테스트
+* 엔딩 모두 확인
+* 콜리션 버그 확인
+* 게이지 밸런스 조절
+* 중력 밸런스 조절
+"""
+
 
 # * 이미지 불러오기
 def load_images():
@@ -68,8 +79,8 @@ def background_manager():
                     place_now_set[i] = random.choice(places[chr(i + 97)])
                 random.shuffle(place_now_set)
                 manager.month += 1
-                pygame.time.set_timer(text_timer, 1000)
-                manager.isText = True
+                manager.isText = 1
+                manager.now_alpha += manager.dt
                 place_idx = 0
                 now_place_cnt = 0
             place_now = place_now_set[place_idx]
@@ -154,15 +165,9 @@ def event_handler(event):
         manager.all_sprites.draw(manager.SCREEN)
         pygame.time.set_timer(place_timer, 0)
         bg_y = -440
-    if event.type == text_timer:
-        pygame.time.set_timer(text_timer, 0)
-        manager.now_alpha -= 1 * manager.dt
-
-    if manager.now_alpha != 255:
-        manager.now_alpha -= 1 * manager.dt
-        if manager.now_alpha <= 0:
-            manager.isText = False
-            manager.now_alpha = 255
+    # if event.type == text_timer:
+    #     pygame.time.set_timer(text_timer, 0)
+    #     manager.now_alpha += manager.dt
 
     if not manager.inPlace:
         if event.type == pygame.KEYDOWN:
@@ -290,3 +295,22 @@ def move_player():
             manager.to_x -= manager.speed * manager.dt
         if down[1]:
             manager.to_x += manager.speed * manager.dt
+
+
+def text_handler():
+    print(manager.isText)
+    if manager.now_alpha != 0:
+        if manager.isText == 1:
+            manager.now_alpha += 1 * manager.dt
+            if 1000 <= manager.now_alpha:
+                manager.isText = 2
+        if manager.isText == 2:
+            manager.now_alpha -= 1 * manager.dt
+            if manager.now_alpha <= 1:
+                manager.now_alpha = 0
+                manager.title = -1
+                manager.isText = 0
+
+    if manager.isText == 1 or manager.isText == 2:
+        manager.title = font.render(f"{manager.month} 월", True, pygame.Color(0, 0, 0))
+        manager.title.set_alpha(manager.now_alpha)
