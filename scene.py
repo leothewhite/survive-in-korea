@@ -59,6 +59,8 @@ def game_scene():
 
     if not -400 <= manager.bg_y <= -240:
         manager.player_x = pygame.math.clamp(manager.player_x, 191, 415)
+    else:
+        manager.player_x = pygame.math.clamp(manager.player_x, 0, 415)
     manager.player.update((manager.player_x, 240))
 
     manager.all_sprites.draw(manager.SCREEN)
