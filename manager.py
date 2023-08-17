@@ -35,6 +35,7 @@ def load_images():
         "place": [
             (i.split(".")[0], pygame.image.load(place_path + i))
             for i in os.listdir(place_path)
+            if i != ".DS_Store"
         ],
         "guage": {
             i.split(".")[0]: pygame.image.load(guage_path + i)
