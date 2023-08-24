@@ -32,7 +32,9 @@ def load_images():
         "player": pygame.image.load("./resources/images/character/player.png"),
         "border": pygame.image.load("./resources/images/background/border.png"),
         "background": pygame.image.load("./resources/images/background/background.png"),
-        "background2": pygame.image.load("./resources/images/background/background.png"),
+        "background2": pygame.image.load(
+            "./resources/images/background/background.png"
+        ),
         "place": [
             (i.split(".")[0], pygame.image.load(place_path + i))
             for i in os.listdir(place_path)
@@ -57,38 +59,83 @@ def load_images():
 def background_manager():
     global now_place_cnt
     global place_idx, place_now
-    for idx in range(20):
-        if 10 <= idx < 18:
+    manager.bg_y -= 0.15 * manager.dt
+
+    # idx는 보더블럭을 업데이트 하기 위한 것
+    for idx in range(50):
+        if 15 <= idx < 23:
             if 2 < place_idx:
+                # 과로
                 if 3 == now_place_cnt:
                     guage.health -= 10
+
+                # 다음 place set을 고름
                 for i in range(3):
                     place_now_set[i] = random.choice(places[chr(i + 97)])
-
                 random.shuffle(place_now_set)
+
                 place_idx = 0
                 now_place_cnt = 0
 
+                # 글자 관련
                 manager.month += 1
                 manager.isText = 1
                 manager.now_alpha += manager.dt
 
-            place_now = place_now_set[place_idx]
-            place_now.update((0, manager.bg_y + 320))
-
+                # 오른쪽 보도블럭만 나타냄
             for t in range(2, 4):
                 now = borders[t][idx]
                 now.update((now.rect.x, manager.bg_y + idx * 32))
+
+            place_now = place_now_set[place_idx]
+            place_now.update((0, manager.bg_y + 480))
+
         else:
             for t in range(4):
                 now = borders[t][idx]
                 now.update((now.rect.x, manager.bg_y + idx * 32))
 
-    if manager.bg_y <= -640:
-        place_idx += 1
+    if manager.bg_y <= -896:
         manager.bg_y = 0
 
-    manager.bg_y -= 0.15 * manager.dt
+        # 장소를 바꿔줌
+        place_idx += 1
+
+    # for idx in range(20):
+    #     # 장소가 나오는 때
+    #     if 10 <= idx < 18:
+    #         if 2 < place_idx:
+    #             if 3 == now_place_cnt:
+    #                 guage.health -= 10
+    #             for i in range(3):
+    #                 place_now_set[i] = random.choice(places[chr(i + 97)])
+
+    #             random.shuffle(place_now_set)
+    #             place_idx = 0
+    #             now_place_cnt = 0
+
+    #             manager.month += 1
+    #             manager.isText = 1
+    #             manager.now_alpha += manager.dt
+
+    #         place_now = place_now_set[place_idx]
+    #         place_now.update((0, manager.bg_y + 320))
+
+    #         # 오른쪽 보도블럭만 나타냄
+    #         for t in range(2, 4):
+    #             now = borders[t][idx]
+    #             now.update((now.rect.x, manager.bg_y + idx * 32))
+
+    #     else:
+    #         for t in range(4):
+    #             now = borders[t][idx]
+    #             now.update((now.rect.x, manager.bg_y + idx * 32))
+
+    # if manager.bg_y <= -640:
+    #     place_idx += 1
+    #     manager.bg_y = 0
+
+    # manager.bg_y -= 0.15 * manager.dt
 
     return place_now
 
@@ -113,6 +160,7 @@ def ending_manager():
 # * 입력
 def event_handler(event):
     global down
+    # 장소에서 기다림을 끝낼 떄
     if event.type == place_timer:
         manager.inPlace = False
         manager.player_x = 480
@@ -196,13 +244,13 @@ def collide_manager():
 
 # * 보더 이미지를 스프라이트로 만듦
 def load_border():
-    for i in range(20):
+    for i in range(50):
         now_y = i * 32
         manager.block = [
             Border(manager.images["border"], (305, now_y)),
-            Border(manager.images["border"], (305, 480 + now_y)),
+            Border(manager.images["border"], (305, 640 + now_y)),
             Border(manager.images["border"], (625, now_y)),
-            Border(manager.images["border"], (625, 480 + now_y)),
+            Border(manager.images["border"], (625, 640 + now_y)),
         ]
         for i in range(4):
             borders[i].append(manager.block[i])

@@ -34,10 +34,9 @@ place_now = -1
 
 def game_scene():
     global isOver, place_now
-    manager.SCREEN.blit(manager.images["background2"], (0, manager.bg_y))
-    manager.SCREEN.blit(manager.images["background"], (0, 640 + manager.bg_y))
+    # manager.SCREEN.blit(manager.images["background2"], (0, manager.bg_y))
+    manager.SCREEN.blit(manager.images["background"], (0, manager.bg_y))
     # manager.SCREEN.blit(manager.images["background2"], (0, 1280+manager.bg_y))
-
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -60,7 +59,7 @@ def game_scene():
 
     manager.player_x += manager.to_x
     print(manager.bg_y)
-    if not -480 <= manager.bg_y <= -320:
+    if not -576 <= manager.bg_y <= -320:
         manager.player_x = pygame.math.clamp(manager.player_x, 320, 580)
     else:
         manager.player_x = pygame.math.clamp(manager.player_x, 0, 580)
