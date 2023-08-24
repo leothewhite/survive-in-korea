@@ -1,7 +1,7 @@
 import random
 import os
 import pygame
-from property import ManageVariable, Border, Place, Guage
+from property import *
 
 pygame.font.init()
 
@@ -20,6 +20,12 @@ place_now = -1
 down = [False, False]
 now_place_cnt = 0
 
+border_size = Size(16, 32)
+screen_size = Size(640, 480)
+background_size = Size(640, 640)
+
+border_cnt = 50
+
 place_timer = pygame.USEREVENT + 1
 
 
@@ -32,9 +38,6 @@ def load_images():
         "player": pygame.image.load("./resources/images/character/player.png"),
         "border": pygame.image.load("./resources/images/background/border.png"),
         "background": pygame.image.load("./resources/images/background/background.png"),
-        "background2": pygame.image.load(
-            "./resources/images/background/background.png"
-        ),
         "place": [
             (i.split(".")[0], pygame.image.load(place_path + i))
             for i in os.listdir(place_path)
@@ -50,19 +53,22 @@ def load_images():
     for _, v in enumerate(manager.images["place"]):
         file_name = v[0]
         file = v[1]
-        places[v[0][0]].append(Place(file, file_name[2:], (0, 480), file_name[0]))
+        places[v[0][0]].append(
+            Place(file, file_name[2:], (0, screen_size.y), file_name[0])
+        )
         place_cnt[file_name[2:]] = 0
     place_now = places["a"][0]
 
 
-# * 배경(배경+보더) 움직이기
+# 배경(배경+보더) 움직이기
 def background_manager():
     global now_place_cnt
     global place_idx, place_now
     manager.bg_y -= 0.15 * manager.dt
 
     # idx는 보더블럭을 업데이트 하기 위한 것
-    for idx in range(50):
+    for idx in range(border_cnt):
+        # 15*32 = 480, 23*32 = 736 (480 + 256)
         if 15 <= idx < 23:
             if 2 < place_idx:
                 # 과로
@@ -82,60 +88,26 @@ def background_manager():
                 manager.isText = 1
                 manager.now_alpha += manager.dt
 
-                # 오른쪽 보도블럭만 나타냄
+            # 오른쪽 보도블럭만 나타냄
             for t in range(2, 4):
                 now = borders[t][idx]
                 now.update((now.rect.x, manager.bg_y + idx * 32))
 
+            # 장소 움직임
             place_now = place_now_set[place_idx]
-            place_now.update((0, manager.bg_y + 480))
+            place_now.update((0, manager.bg_y + screen_size.y))
 
         else:
             for t in range(4):
                 now = borders[t][idx]
                 now.update((now.rect.x, manager.bg_y + idx * 32))
 
+    # 640(그림 한 칸의 단위) + 256(건물의 높이)
     if manager.bg_y <= -896:
         manager.bg_y = 0
 
         # 장소를 바꿔줌
         place_idx += 1
-
-    # for idx in range(20):
-    #     # 장소가 나오는 때
-    #     if 10 <= idx < 18:
-    #         if 2 < place_idx:
-    #             if 3 == now_place_cnt:
-    #                 guage.health -= 10
-    #             for i in range(3):
-    #                 place_now_set[i] = random.choice(places[chr(i + 97)])
-
-    #             random.shuffle(place_now_set)
-    #             place_idx = 0
-    #             now_place_cnt = 0
-
-    #             manager.month += 1
-    #             manager.isText = 1
-    #             manager.now_alpha += manager.dt
-
-    #         place_now = place_now_set[place_idx]
-    #         place_now.update((0, manager.bg_y + 320))
-
-    #         # 오른쪽 보도블럭만 나타냄
-    #         for t in range(2, 4):
-    #             now = borders[t][idx]
-    #             now.update((now.rect.x, manager.bg_y + idx * 32))
-
-    #     else:
-    #         for t in range(4):
-    #             now = borders[t][idx]
-    #             now.update((now.rect.x, manager.bg_y + idx * 32))
-
-    # if manager.bg_y <= -640:
-    #     place_idx += 1
-    #     manager.bg_y = 0
-
-    # manager.bg_y -= 0.15 * manager.dt
 
     return place_now
 
@@ -163,12 +135,18 @@ def event_handler(event):
     # 장소에서 기다림을 끝낼 떄
     if event.type == place_timer:
         manager.inPlace = False
+
+        # 플레이어 움직임
         manager.player_x = 480
-        manager.player.update((480, 240))
+        manager.bg_y = -400
+        manager.player.update((manager.player_x, screen_size.y / 2))
+
+        # 안보이게 했던 플레이러를 다시 나타냄
         manager.all_sprites.add(manager.player)
         manager.all_sprites.draw(manager.SCREEN)
+
+        # 타이머 취소
         pygame.time.set_timer(place_timer, 0)
-        manager.bg_y = -400
 
     if not manager.inPlace:
         if event.type == pygame.KEYDOWN:
@@ -230,12 +208,16 @@ def collide_manager():
     for key in places:
         col_place = list_collided(manager.player, key)
 
+        # 장소 입장
         if col_place:
-            manager.all_sprites.remove(manager.player)
-            down = [False, False]
-            pygame.time.set_timer(place_timer, 2000)
+            manager.all_sprites.remove(manager.player)  # 플레이어를 안보이게
+            down = [False, False]  # 키가 눌린 상태인지
+            pygame.time.set_timer(place_timer, 2000)  # 언제 장소에서 나올지 타이머
+
             manager.bg_y = -400
             manager.inPlace = True
+
+            # 방문확인
             place_cnt[col_place] += 1
             now_place_cnt += 1
 
@@ -244,13 +226,15 @@ def collide_manager():
 
 # * 보더 이미지를 스프라이트로 만듦
 def load_border():
-    for i in range(50):
-        now_y = i * 32
+    for i in range(border_cnt):
+        now_y = i * border_size.y
+
         manager.block = [
+            # 두세트를 만듦
             Border(manager.images["border"], (305, now_y)),
-            Border(manager.images["border"], (305, 640 + now_y)),
+            Border(manager.images["border"], (305, background_size.y + now_y)),
             Border(manager.images["border"], (625, now_y)),
-            Border(manager.images["border"], (625, 640 + now_y)),
+            Border(manager.images["border"], (625, background_size.y + now_y)),
         ]
         for i in range(4):
             borders[i].append(manager.block[i])
@@ -260,11 +244,16 @@ def load_border():
 # * 게이지 값에 따른 중력 값 설정
 def make_gravity():
     global gravity
+
+    # 진로탐색/스트레스 형식이면 끌림
     if place_now.type == "a" or place_now.type == "c":
         gravity = guage.stress / 10
+
+    # 독서실은 거부함
     elif place_now.type == "b":
         gravity = -(guage.stress / 10)
 
+    # 중력 적용
     if place_now.rect.y - 40 <= manager.player.rect.y <= place_now.rect.y + 200:
         manager.to_x -= gravity
 

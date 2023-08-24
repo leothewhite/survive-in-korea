@@ -71,3 +71,9 @@ class Button(pygame.sprite.Sprite):
     def update(self, pos):
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
+
+
+class Size:
+    def __init__(self, width, height):
+        self.x = width
+        self.y = height

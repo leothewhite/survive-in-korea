@@ -27,24 +27,22 @@ manager.all_sprites.add(manager.player)
 
 # * 씬 함수들은 RUNNING과 다음 씬을 리턴한다
 
-isOver = False
-
 place_now = -1
 
 
 def game_scene():
-    global isOver, place_now
-    # manager.SCREEN.blit(manager.images["background2"], (0, manager.bg_y))
+    global place_now
     manager.SCREEN.blit(manager.images["background"], (0, manager.bg_y))
-    # manager.SCREEN.blit(manager.images["background2"], (0, 1280+manager.bg_y))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
         event_handler(event)
+
     # * 꾹 누르고 있는 상태 움직임
     move_player()
     text_handler()
+
     if not manager.inPlace:
         make_gravity()
         collide_manager()
