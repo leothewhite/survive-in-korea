@@ -57,7 +57,7 @@ def game_scene():
 
     manager.player_x += manager.to_x
     print(manager.bg_y)
-    if not -576 <= manager.bg_y <= -320:
+    if not -(200 + 256) <= manager.bg_y <= -200:
         manager.player_x = pygame.math.clamp(manager.player_x, 320, 580)
     else:
         manager.player_x = pygame.math.clamp(manager.player_x, 0, 580)

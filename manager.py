@@ -103,7 +103,7 @@ def background_manager():
                 now.update((now.rect.x, manager.bg_y + idx * 32))
 
     # 640(그림 한 칸의 단위) + 256(건물의 높이)
-    if manager.bg_y <= -896:
+    if manager.bg_y <= -(640 + 256):
         manager.bg_y = 0
 
         # 장소를 바꿔줌
