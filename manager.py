@@ -32,6 +32,7 @@ def load_images():
         "player": pygame.image.load("./resources/images/character/player.png"),
         "border": pygame.image.load("./resources/images/background/border.png"),
         "background": pygame.image.load("./resources/images/background/background.png"),
+        "background2": pygame.image.load("./resources/images/background/background.png"),
         "place": [
             (i.split(".")[0], pygame.image.load(place_path + i))
             for i in os.listdir(place_path)
@@ -47,7 +48,7 @@ def load_images():
     for _, v in enumerate(manager.images["place"]):
         file_name = v[0]
         file = v[1]
-        places[v[0][0]].append(Place(file, file_name[2:], (33, 480), file_name[0]))
+        places[v[0][0]].append(Place(file, file_name[2:], (0, 480), file_name[0]))
         place_cnt[file_name[2:]] = 0
     place_now = places["a"][0]
 
@@ -56,8 +57,8 @@ def load_images():
 def background_manager():
     global now_place_cnt
     global place_idx, place_now
-    for idx in range(32):
-        if 12 <= idx < 16:
+    for idx in range(20):
+        if 10 <= idx < 18:
             if 2 < place_idx:
                 if 3 == now_place_cnt:
                     guage.health -= 10
@@ -73,17 +74,17 @@ def background_manager():
                 manager.now_alpha += manager.dt
 
             place_now = place_now_set[place_idx]
-            place_now.update((31, manager.bg_y + 480))
+            place_now.update((0, manager.bg_y + 320))
 
             for t in range(2, 4):
                 now = borders[t][idx]
-                now.update((now.rect.x, manager.bg_y + idx * 40))
+                now.update((now.rect.x, manager.bg_y + idx * 32))
         else:
             for t in range(4):
                 now = borders[t][idx]
-                now.update((now.rect.x, manager.bg_y + idx * 40))
+                now.update((now.rect.x, manager.bg_y + idx * 32))
 
-    if manager.bg_y <= -480 - 160:
+    if manager.bg_y <= -640:
         place_idx += 1
         manager.bg_y = 0
 
@@ -114,11 +115,12 @@ def event_handler(event):
     global down
     if event.type == place_timer:
         manager.inPlace = False
-        manager.player_x = 320
-        manager.player.update((manager.player_x, 240))
+        manager.player_x = 480
+        manager.player.update((480, 240))
+        manager.all_sprites.add(manager.player)
         manager.all_sprites.draw(manager.SCREEN)
         pygame.time.set_timer(place_timer, 0)
-        manager.bg_y = -440
+        manager.bg_y = -400
 
     if not manager.inPlace:
         if event.type == pygame.KEYDOWN:
@@ -181,10 +183,10 @@ def collide_manager():
         col_place = list_collided(manager.player, key)
 
         if col_place:
-            manager.player_x = 140
+            manager.all_sprites.remove(manager.player)
             down = [False, False]
             pygame.time.set_timer(place_timer, 2000)
-            manager.bg_y = -300
+            manager.bg_y = -400
             manager.inPlace = True
             place_cnt[col_place] += 1
             now_place_cnt += 1
@@ -194,13 +196,13 @@ def collide_manager():
 
 # * 보더 이미지를 스프라이트로 만듦
 def load_border():
-    for i in range(32):
-        now_y = i * 60
+    for i in range(20):
+        now_y = i * 32
         manager.block = [
-            Border(manager.images["border"], (171, now_y)),
-            Border(manager.images["border"], (171, 480 + now_y)),
-            Border(manager.images["border"], (456, now_y)),
-            Border(manager.images["border"], (456, 480 + now_y)),
+            Border(manager.images["border"], (305, now_y)),
+            Border(manager.images["border"], (305, 480 + now_y)),
+            Border(manager.images["border"], (625, now_y)),
+            Border(manager.images["border"], (625, 480 + now_y)),
         ]
         for i in range(4):
             borders[i].append(manager.block[i])

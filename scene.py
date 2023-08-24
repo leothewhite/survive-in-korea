@@ -4,7 +4,7 @@ from manager import *
 
 manager = ManageVariable()
 
-manager.player_x = 320
+manager.player_x = 480
 manager.to_x = 0
 manager.all_sprites = pygame.sprite.Group()
 manager.SCREEN = pygame.display.set_mode((640, 480))
@@ -34,8 +34,11 @@ place_now = -1
 
 def game_scene():
     global isOver, place_now
-    manager.SCREEN.blit(manager.images["background"], (0, manager.bg_y))
+    manager.SCREEN.blit(manager.images["background2"], (0, manager.bg_y))
     manager.SCREEN.blit(manager.images["background"], (0, 640 + manager.bg_y))
+    # manager.SCREEN.blit(manager.images["background2"], (0, 1280+manager.bg_y))
+
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
@@ -56,11 +59,11 @@ def game_scene():
         return True, "OVER" + f" {reason}"
 
     manager.player_x += manager.to_x
-
-    if not -400 <= manager.bg_y <= -240:
-        manager.player_x = pygame.math.clamp(manager.player_x, 191, 415)
+    print(manager.bg_y)
+    if not -480 <= manager.bg_y <= -320:
+        manager.player_x = pygame.math.clamp(manager.player_x, 320, 580)
     else:
-        manager.player_x = pygame.math.clamp(manager.player_x, 0, 415)
+        manager.player_x = pygame.math.clamp(manager.player_x, 0, 580)
     manager.player.update((manager.player_x, 240))
 
     manager.all_sprites.draw(manager.SCREEN)
