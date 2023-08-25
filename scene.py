@@ -148,11 +148,14 @@ def over_scene(reason):
     manager.SCREEN.blit(over[reason], (0, 0))
     all_sprites.draw(manager.SCREEN)
     pygame.display.update()
+    manager.clear()
 
     return True, "OVER " + reason
 
 
 clicked = 0
+
+# TODO: 게임 오버시 변수 초기화
 
 
 def tutorial_scene():
