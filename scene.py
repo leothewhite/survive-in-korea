@@ -4,35 +4,51 @@ from manager import *
 
 manager = ManageVariable()
 
-manager.player_x = 480
-manager.to_x = 0
-manager.all_sprites = pygame.sprite.Group()
-manager.SCREEN = pygame.display.set_mode((640, 480))
-manager.speed = 0.2
-manager.inPlace = False
-manager.month = 0
-manager.now_alpha = 0
-manager.title = -1
-manager.bg_y = 0
-manager.isText = False
 
-load_images()
-load_border()
+############### 이미지+스프라이트 로딩 #################
+place_path = "./resources/images/place/"
+guage_path = "./resources/images/guage/"
 
+border_image = pygame.image.load("./resources/images/background/border.png")
+background_image = pygame.image.load("./resources/images/background/background.png")
+place_image = [
+    (i.split(".")[0], pygame.image.load(place_path + i))
+    for i in os.listdir(place_path)
+    if i != ".DS_Store"
+]
+guage_image = {
+    i.split(".")[0]: pygame.image.load(guage_path + i)
+    for i in os.listdir(guage_path)
+    if i != ".DS_Store"
+}
 
-manager.player = Character(manager.images["player"])
+for _, v in enumerate(place_image):
+    file_name = v[0]
+    file = v[1]
+    places[v[0][0]].append(Place(file, file_name[2:], (0, screen_size.y), file_name[0]))
+    place_cnt[file_name[2:]] = 0
+manager.place_now = places["a"][0]
 
-manager.player.update((manager.player_x, 240))
-manager.all_sprites.add(manager.player)
+for i in range(50):
+    now_y = i * border_size.y
 
+    manager.block = [
+        # 두세트를 만듦
+        Border(border_image, (305, now_y)),
+        Border(border_image, (305, background_size.y + now_y)),
+        Border(border_image, (625, now_y)),
+        Border(border_image, (625, background_size.y + now_y)),
+    ]
+    for i in range(4):
+        borders[i].append(manager.block[i])
+        manager.all_sprites.add(manager.block[i])
 # * 씬 함수들은 RUNNING과 다음 씬을 리턴한다
 
-place_now = -1
+#######################################################
 
 
 def game_scene():
-    global place_now
-    manager.SCREEN.blit(manager.images["background"], (0, manager.bg_y))
+    manager.SCREEN.blit(background_image, (0, manager.bg_y))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -46,10 +62,10 @@ def game_scene():
     if not manager.inPlace:
         make_gravity()
         collide_manager()
-        place_now = background_manager()
+        background_manager()
 
     reason = ending_manager()
-    place_now.draw(manager.SCREEN)
+    manager.place_now.draw(manager.SCREEN)
 
     # * 게임 캐릭터가 죽었으면 OVER {reason} 값을 리턴한다
     if reason:
@@ -68,7 +84,18 @@ def game_scene():
     if manager.title != -1:
         manager.SCREEN.blit(manager.title, (40, 40))
 
-    draw_guage()
+    guages = [guage.stress, guage.health, guage.grade, guage.future]
+    guage_name = ["stress", "health", "grade", "future"]
+
+    for i in range(4):
+        manager.SCREEN.blit(guage_image["frame"], (525, 320 + 40 * i))
+
+        guages[i] = pygame.math.clamp(guages[i], 0, 100)
+        for j in range(20):
+            if j < guages[i] // 5:
+                manager.SCREEN.blit(
+                    guage_image[guage_name[i]], (527 + (5 * j), 322 + (40 * i))
+                )
 
     manager.to_x = 0
 
