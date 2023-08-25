@@ -8,20 +8,10 @@ pygame.font.init()
 manager = ManageVariable()
 
 
-manager.player_x = 480
-manager.to_x = 0
-manager.all_sprites = pygame.sprite.Group()
-manager.SCREEN = pygame.display.set_mode((640, 480))
-manager.speed = 0.2
-manager.inPlace = False
-manager.title = -1
-manager.bg_y = 0
-
 isText = 0
 now_alpha = 0
 month = 0
-
-place_cnt = {}
+stress_cnt = 0
 place_now_set = [-1, -1, -1]
 place_idx = 3
 borders = [[], [], [], []]
@@ -40,16 +30,6 @@ background_size = Size(640, 640)
 border_cnt = 50
 
 place_timer = pygame.USEREVENT + 1
-
-manager.player = Character(pygame.image.load("./resources/images/character/player.png"))
-
-manager.player.update((manager.player_x, 240))
-manager.all_sprites.add(manager.player)
-
-
-# * 이미지 불러오기
-# def load_images():
-#     global place_now
 
 
 # 배경(배경+보더) 움직이기
@@ -170,22 +150,21 @@ def list_collided(player, place_type):
 
 
 def guage_manager(place_type, col_place):
+    global stress_cnt
+
     if place_type == "a":
         guage.stress -= 5
         if col_place == "alley":
             guage.health -= 5
         if col_place == "basketball":
             guage.health += 5
-        if 5 <= place_cnt[col_place]:
+        if 5 <= stress_cnt:
             guage.grade -= 5
-            place_cnt[col_place] = 0
+            stress_cnt = 0
 
     if place_type == "b":
         guage.stress += 10
         guage.grade += 5
-        if 5 <= place_cnt[col_place]:
-            guage.health -= 5
-            place_cnt[col_place] = 0
 
     if place_type == "c":
         guage.future += 10
@@ -207,8 +186,6 @@ def collide_manager():
             manager.bg_y = -400
             manager.inPlace = True
 
-            # 방문확인
-            place_cnt[col_place] += 1
             now_place_cnt += 1
 
             guage_manager(key, col_place)

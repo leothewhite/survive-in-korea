@@ -5,34 +5,53 @@ from manager import *
 manager = ManageVariable()
 
 
+manager.player_x = 480
+manager.to_x = 0
+manager.all_sprites = pygame.sprite.Group()
+manager.SCREEN = pygame.display.set_mode((640, 480))
+manager.speed = 0.2
+manager.inPlace = False
+manager.title = -1
+manager.bg_y = 0
+
+manager.player = Character(pygame.image.load("./resources/images/character/player.png"))
+
+manager.player.update((manager.player_x, 240))
+manager.all_sprites.add(manager.player)
+
 ############### 이미지+스프라이트 로딩 #################
 place_path = "./resources/images/place/"
 guage_path = "./resources/images/guage/"
 
 border_image = pygame.image.load("./resources/images/background/border.png")
 background_image = pygame.image.load("./resources/images/background/background.png")
+
+# place_path에서 파일들을 받아와서 이미지로 place_image 리스트에 저장
 place_image = [
     (i.split(".")[0], pygame.image.load(place_path + i))
     for i in os.listdir(place_path)
     if i != ".DS_Store"
 ]
+
+# guage_path에서 파일들을 받아와서 이미지로 guage_image 딕셔네리에 저장
 guage_image = {
     i.split(".")[0]: pygame.image.load(guage_path + i)
     for i in os.listdir(guage_path)
     if i != ".DS_Store"
 }
 
+# place_image에 이미지들을 스프라이트로 바꿔 places 딕셔네리에 넣음
 for _, v in enumerate(place_image):
     file_name = v[0]
     file = v[1]
     places[v[0][0]].append(Place(file, file_name[2:], (0, screen_size.y), file_name[0]))
-    place_cnt[file_name[2:]] = 0
 manager.place_now = places["a"][0]
 
+# 보더 이미지를 가지고 borders배열에 스프라이트로 저장
 for i in range(50):
     now_y = i * border_size.y
 
-    manager.block = [
+    block = [
         # 두세트를 만듦
         Border(border_image, (305, now_y)),
         Border(border_image, (305, background_size.y + now_y)),
@@ -40,9 +59,8 @@ for i in range(50):
         Border(border_image, (625, background_size.y + now_y)),
     ]
     for i in range(4):
-        borders[i].append(manager.block[i])
-        manager.all_sprites.add(manager.block[i])
-# * 씬 함수들은 RUNNING과 다음 씬을 리턴한다
+        borders[i].append(block[i])
+        manager.all_sprites.add(block[i])
 
 #######################################################
 
