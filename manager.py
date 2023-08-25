@@ -17,7 +17,7 @@ manager.inPlace = False
 manager.title = -1
 manager.bg_y = 0
 
-isText = False
+isText = 0
 now_alpha = 0
 month = 0
 
@@ -55,7 +55,7 @@ manager.all_sprites.add(manager.player)
 # 배경(배경+보더) 움직이기
 def background_manager():
     global now_place_cnt
-    global place_idx, month, now_alpha
+    global place_idx, month, now_alpha, isText
     manager.bg_y -= 0.15 * manager.dt
 
     # idx는 보더블럭을 업데이트 하기 위한 것
@@ -77,7 +77,7 @@ def background_manager():
 
                 # 글자 관련
                 month += 1
-                manager.isText = 1
+                isText = 1
                 now_alpha += manager.dt
 
             # 오른쪽 보도블럭만 나타냄
@@ -247,7 +247,7 @@ def move_player():
 # 텍스트 나타나고 없어지기
 def text_handler():
     global isText, now_alpha
-
+    print(isText)
     if now_alpha != 0:
         if isText == 1:
             now_alpha += 1 * manager.dt

@@ -67,23 +67,21 @@ def game_scene():
     reason = ending_manager()
     manager.place_now.draw(manager.SCREEN)
 
-    # * 게임 캐릭터가 죽었으면 OVER {reason} 값을 리턴한다
+    # 캐릭터가 죽었으면 OVER {reason} 값을 리턴한다
     if reason:
         return True, "OVER" + f" {reason}"
 
     manager.player_x += manager.to_x
-    print(manager.bg_y)
+
+    ################ 플레이어 가두기 ##################
     if not -(200 + 256) <= manager.bg_y <= -200:
         manager.player_x = pygame.math.clamp(manager.player_x, 320, 580)
     else:
         manager.player_x = pygame.math.clamp(manager.player_x, 0, 580)
     manager.player.update((manager.player_x, 240))
+    ##############################################
 
-    manager.all_sprites.draw(manager.SCREEN)
-
-    if manager.title != -1:
-        manager.SCREEN.blit(manager.title, (40, 40))
-
+    ################## 게이지 그리기 ##################
     guages = [guage.stress, guage.health, guage.grade, guage.future]
     guage_name = ["stress", "health", "grade", "future"]
 
@@ -96,6 +94,14 @@ def game_scene():
                 manager.SCREEN.blit(
                     guage_image[guage_name[i]], (527 + (5 * j), 322 + (40 * i))
                 )
+    #################################################
+
+    ########## 화면에 그리기 ###############
+    manager.all_sprites.draw(manager.SCREEN)
+
+    if manager.title != -1:
+        manager.SCREEN.blit(manager.title, (40, 40))
+    ####################################
 
     manager.to_x = 0
 
