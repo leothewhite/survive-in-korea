@@ -1,72 +1,20 @@
 from property import *
 from manager import *
-
+from constants import *
+from variable import initialize
 
 manager = ManageVariable()
 
 
-manager.player_x = 480
-manager.to_x = 0
-manager.all_sprites = pygame.sprite.Group()
-manager.SCREEN = pygame.display.set_mode((640, 480))
-manager.speed = 0.2
-manager.inPlace = False
-manager.title = -1
-manager.bg_y = 0
+#######################################################
 
-manager.player = Character(pygame.image.load("./resources/images/character/player.png"))
 
 manager.player.update((manager.player_x, 240))
 manager.all_sprites.add(manager.player)
 
-############### 이미지+스프라이트 로딩 #################
-place_path = "./resources/images/place/"
-guage_path = "./resources/images/guage/"
-
-border_image = pygame.image.load("./resources/images/background/border.png")
-background_image = pygame.image.load("./resources/images/background/background.png")
-
-# place_path에서 파일들을 받아와서 이미지로 place_image 리스트에 저장
-place_image = [
-    (i.split(".")[0], pygame.image.load(place_path + i))
-    for i in os.listdir(place_path)
-    if i != ".DS_Store"
-]
-
-# guage_path에서 파일들을 받아와서 이미지로 guage_image 딕셔네리에 저장
-guage_image = {
-    i.split(".")[0]: pygame.image.load(guage_path + i)
-    for i in os.listdir(guage_path)
-    if i != ".DS_Store"
-}
-
-# place_image에 이미지들을 스프라이트로 바꿔 places 딕셔네리에 넣음
-for _, v in enumerate(place_image):
-    file_name = v[0]
-    file = v[1]
-    places[v[0][0]].append(Place(file, file_name[2:], (0, screen_size.y), file_name[0]))
-manager.place_now = places["a"][0]
-
-# 보더 이미지를 가지고 borders배열에 스프라이트로 저장
-for i in range(50):
-    now_y = i * border_size.y
-
-    block = [
-        # 두세트를 만듦
-        Border(border_image, (305, now_y)),
-        Border(border_image, (305, background_size.y + now_y)),
-        Border(border_image, (625, now_y)),
-        Border(border_image, (625, background_size.y + now_y)),
-    ]
-    for i in range(4):
-        borders[i].append(block[i])
-        manager.all_sprites.add(block[i])
-
-#######################################################
-
 
 def game_scene():
-    manager.SCREEN.blit(background_image, (0, manager.bg_y))
+    manager.SCREEN.blit(BG_IMAGE, (0, manager.bg_y))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -99,21 +47,6 @@ def game_scene():
     manager.player.update((manager.player_x, 240))
     ##############################################
 
-    ################## 게이지 그리기 ##################
-    guages = [guage.stress, guage.health, guage.grade, guage.future]
-    guage_name = ["stress", "health", "grade", "future"]
-
-    for i in range(4):
-        manager.SCREEN.blit(guage_image["frame"], (525, 320 + 40 * i))
-
-        guages[i] = pygame.math.clamp(guages[i], 0, 100)
-        for j in range(20):
-            if j < guages[i] // 5:
-                manager.SCREEN.blit(
-                    guage_image[guage_name[i]], (527 + (5 * j), 322 + (40 * i))
-                )
-    #################################################
-
     ########## 화면에 그리기 ###############
     manager.all_sprites.draw(manager.SCREEN)
 
@@ -121,6 +54,25 @@ def game_scene():
         manager.SCREEN.blit(manager.title, (40, 40))
     ####################################
 
+    ################## 게이지 그리기 ##################
+    guages = [
+        manager.guage.stress,
+        manager.guage.health,
+        manager.guage.grade,
+        manager.guage.future,
+    ]
+    guage_name = ["stress", "health", "grade", "future"]
+
+    for i in range(4):
+        manager.SCREEN.blit(GUAGE_IMAGE["frame"], (525, 320 + 40 * i))
+
+        guages[i] = pygame.math.clamp(guages[i], 0, 100)
+        for j in range(20):
+            if j < guages[i] // 5:
+                manager.SCREEN.blit(
+                    GUAGE_IMAGE[guage_name[i]], (527 + (5 * j), 322 + (40 * i))
+                )
+    #################################################
     manager.to_x = 0
 
     pygame.display.update()
@@ -157,6 +109,7 @@ def menu_scene():
 
             if obj["start"].rect.collidepoint(x, y):
                 print("start game")
+                initialize()
                 return True, "GAME"
             if obj["exit"].rect.collidepoint(x, y):
                 print("exit game")
@@ -199,14 +152,11 @@ def over_scene(reason):
     manager.SCREEN.blit(over[reason], (0, 0))
     all_sprites.draw(manager.SCREEN)
     pygame.display.update()
-    manager.clear()
 
     return True, "OVER " + reason
 
 
 clicked = 0
-
-# TODO: 게임 오버시 변수 초기화
 
 
 def tutorial_scene():

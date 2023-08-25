@@ -1,5 +1,9 @@
 import pygame
 
+from variable import initialize
+
+initialize()
+
 from property import *
 from manager import *
 from scene import *
@@ -10,6 +14,12 @@ CLOCK = pygame.time.Clock()
 RUNNING = True
 
 now_scene = "MENU"
+
+# manager = ManageVariable()
+
+
+# print(manager.player_x)
+
 
 while RUNNING:
     manager.dt = CLOCK.tick(60)
