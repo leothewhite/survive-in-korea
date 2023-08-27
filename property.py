@@ -5,10 +5,36 @@ import pygame
 class Character(pygame.sprite.Sprite):
     def __init__(self, img):
         pygame.sprite.Sprite.__init__(self)
-        self.image = img
+
+        self.images = []
+
+        self.images += [
+            pygame.image.load("./resources/images/character/player1.png")
+        ] * 8
+        self.images += [
+            pygame.image.load("./resources/images/character/player2.png")
+        ] * 8
+        self.images += [
+            pygame.image.load("./resources/images/character/player3.png")
+        ] * 8
+        self.images += [
+            pygame.image.load("./resources/images/character/player4.png")
+        ] * 8
+
+        print(self.images)
+
+        self.index = 0
+
+        self.image = self.images[self.index]
         self.rect = self.image.get_rect()
 
     def update(self, pos):
+        self.index += 1
+
+        if 32 <= self.index:
+            self.index = 0
+
+        self.image = self.images[self.index]
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
 

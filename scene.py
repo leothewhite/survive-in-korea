@@ -41,7 +41,11 @@ def game_scene():
 
     ################ 플레이어 가두기 ##################
     if not -(200 + 256) <= manager.bg_y <= -200:
-        manager.player_x = pygame.math.clamp(manager.player_x, 320, 580)
+        manager.player_x = pygame.math.clamp(
+            manager.player_x,
+            320,
+            SCREEN_SIZE.x - manager.player.rect.width - BORDER_SIZE.x,
+        )
     else:
         manager.player_x = pygame.math.clamp(manager.player_x, 0, 580)
     manager.player.update((manager.player_x, 240))

@@ -174,7 +174,7 @@ def make_gravity():
 
     # 중력 적용
     if (
-        manager.place_now.rect.y - 40
+        manager.place_now.rect.y - manager.player.rect.height
         <= manager.player.rect.y
         <= manager.place_now.rect.y + 200
     ):
