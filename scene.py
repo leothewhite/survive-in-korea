@@ -15,7 +15,6 @@ manager.all_sprites.add(manager.player)
 
 def game_scene():
     manager.SCREEN.blit(BG_IMAGE, (0, manager.bg_y))
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
@@ -48,10 +47,10 @@ def game_scene():
         )
     else:
         manager.player_x = pygame.math.clamp(manager.player_x, 0, 580)
-    manager.player.update((manager.player_x, 240))
     ##############################################
 
     ########## 화면에 그리기 ###############
+    manager.player.update((manager.player_x, 240))
     manager.all_sprites.draw(manager.SCREEN)
 
     if manager.title != -1:
@@ -68,40 +67,43 @@ def game_scene():
     guage_name = ["stress", "health", "grade", "future"]
 
     for i in range(4):
-        manager.SCREEN.blit(GUAGE_IMAGE["frame"], (525, 320 + 40 * i))
-
         guages[i] = pygame.math.clamp(guages[i], 0, 100)
         for j in range(20):
             if j < guages[i] // 5:
                 manager.SCREEN.blit(
                     GUAGE_IMAGE[guage_name[i]], (527 + (5 * j), 322 + (40 * i))
                 )
+        manager.SCREEN.blit(GUAGE_IMAGE["frame_" + guage_name[i]], (525, 320 + 40 * i))
     #################################################
     manager.to_x = 0
-
     pygame.display.update()
 
     return True, "GAME"
 
 
 def menu_scene():
-    all_sprites = pygame.sprite.Group()
     obj = {
-        "background": pygame.image.load("./resources/images/menu/menu_background.png"),
-        "start": Button(pygame.image.load("./resources/images/menu/game_start.png")),
-        "exit": Button(pygame.image.load("./resources/images/menu/game_exit.png")),
+        "start": Button(
+            pygame.image.load("./resources/images/menu/game_start.png"), (200, 200)
+        ),
+        "exit": Button(
+            pygame.image.load("./resources/images/menu/game_exit.png"), (200, 260)
+        ),
         "tutorial": Button(
-            pygame.image.load("./resources/images/menu/game_tutorial.png")
+            pygame.image.load("./resources/images/menu/game_tutorial.png"), (200, 320)
         ),
     }
+    title = pygame.image.load("./resources/images/menu/title.png")
+    MENU_BACKGROUND.update()
+    manager.all_sprites_menu.add(MENU_BACKGROUND)
 
-    obj["start"].update((200, 200))
-    obj["exit"].update((200, 260))
-    obj["tutorial"].update((200, 320))
+    # obj["start"].update((200, 200))
+    # obj["exit"].update((200, 260))
+    # obj["tutorial"].update((200, 320))
 
-    all_sprites.add(obj["start"])
-    all_sprites.add(obj["exit"])
-    all_sprites.add(obj["tutorial"])
+    manager.all_sprites_menu.add(obj["start"])
+    manager.all_sprites_menu.add(obj["exit"])
+    manager.all_sprites_menu.add(obj["tutorial"])
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -122,9 +124,8 @@ def menu_scene():
                 print("tutorial")
                 return False, "TUTORIAL"
 
-    manager.SCREEN.blit(obj["background"], (0, 0))
-
-    all_sprites.draw(manager.SCREEN)
+    manager.all_sprites_menu.draw(manager.SCREEN)
+    manager.SCREEN.blit(title, (80, 40))
 
     pygame.display.update()
 
@@ -133,8 +134,10 @@ def menu_scene():
 
 def over_scene(reason):
     all_sprites = pygame.sprite.Group()
-    return_menu = Button(pygame.image.load("./resources/images/menu/return.png"))
-    return_menu.update((200, 400))
+    return_menu = Button(
+        pygame.image.load("./resources/images/menu/return.png"), (200, 400)
+    )
+    return_menu.update((20, 400))
     all_sprites.add(return_menu)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

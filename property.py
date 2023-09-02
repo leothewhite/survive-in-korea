@@ -1,4 +1,3 @@
-from typing import Any
 import pygame
 
 
@@ -90,10 +89,11 @@ class ManageVariable:
 
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, img):
+    def __init__(self, img, pos):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
         self.rect = self.image.get_rect()
+        self.rect.topleft = pos
 
     def update(self, pos):
         self.rect = self.image.get_rect()
@@ -104,3 +104,27 @@ class Size:
     def __init__(self, width, height):
         self.x = width
         self.y = height
+
+
+class MenuBackground(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.backgrounds = []
+        for i in range(1, 13):
+            for _ in range(60):
+                self.backgrounds.append(
+                    pygame.image.load(f"./resources/images/menu/background{i}.png")
+                )
+        self.index = 0
+
+        self.image = self.backgrounds[self.index]
+        self.rect = self.image.get_rect()
+
+    def update(self):
+        self.index += 1
+
+        if 720 <= self.index:
+            self.index = 0
+
+        self.image = self.backgrounds[self.index]
+        self.rect = self.image.get_rect()

@@ -25,6 +25,8 @@ def initialize():
     manager.player_x = 480
     manager.to_x = 0
     manager.all_sprites = pygame.sprite.Group()
+    manager.all_sprites_menu = pygame.sprite.Group()
+
     manager.SCREEN = pygame.display.set_mode((640, 480))
     manager.SPEED = 0.2
     manager.inPlace = False

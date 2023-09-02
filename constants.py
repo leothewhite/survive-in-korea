@@ -1,5 +1,5 @@
 import pygame
-from property import Size
+from property import Size, MenuBackground
 import os
 
 pygame.font.init()
@@ -8,7 +8,7 @@ pygame.font.init()
 FONT = pygame.font.Font("./resources/fonts/NeoDunggeunmoPro-Regular.ttf", 30)
 BORDER_SIZE = Size(16, 32)
 SCREEN_SIZE = Size(640, 480)
-BG_SIZE = Size(640, 640)
+BG_SIZE = Size(640, 480)
 PLACE_PATH = "./resources/images/place/"
 GUAGE_PATH = "./resources/images/guage/"
 
@@ -30,3 +30,6 @@ GUAGE_IMAGE = {
     for i in os.listdir(GUAGE_PATH)
     if i != ".DS_Store"
 }
+
+
+MENU_BACKGROUND = MenuBackground()
