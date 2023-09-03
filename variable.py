@@ -16,7 +16,6 @@ def initialize():
     manager.guage = Guage()
     manager.gravity = 1
     manager.places = {"a": [], "b": [], "c": []}
-    # place_now = -1
     manager.down = [False, False]
     manager.now_place_cnt = 0
 
@@ -32,9 +31,7 @@ def initialize():
     manager.inPlace = False
     manager.title = -1
     manager.bg_y = 0
-    manager.player = Character(
-        pygame.image.load("./resources/images/character/player.png")
-    )
+    manager.player = Character()
 
     # place_image에 이미지들을 스프라이트로 바꿔 places 딕셔네리에 넣음
     for _, v in enumerate(PLACE_IMAGE):

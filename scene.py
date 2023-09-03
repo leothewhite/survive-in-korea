@@ -97,10 +97,6 @@ def menu_scene():
     MENU_BACKGROUND.update()
     manager.all_sprites_menu.add(MENU_BACKGROUND)
 
-    # obj["start"].update((200, 200))
-    # obj["exit"].update((200, 260))
-    # obj["tutorial"].update((200, 320))
-
     manager.all_sprites_menu.add(obj["start"])
     manager.all_sprites_menu.add(obj["exit"])
     manager.all_sprites_menu.add(obj["tutorial"])
@@ -111,17 +107,14 @@ def menu_scene():
 
         #  * 마우스 버튼 클릭
         if event.type == pygame.MOUSEBUTTONDOWN:
-            x, y = event.pos
+            x, y = pygame.mouse.get_pos()
 
             if obj["start"].rect.collidepoint(x, y):
-                print("start game")
                 initialize()
                 return True, "GAME"
             if obj["exit"].rect.collidepoint(x, y):
-                print("exit game")
                 return False, "END"
             if obj["tutorial"].rect.collidepoint(x, y):
-                print("tutorial")
                 return False, "TUTORIAL"
 
     manager.all_sprites_menu.draw(manager.SCREEN)
@@ -166,23 +159,26 @@ def over_scene(reason):
 clicked = 0
 
 
-def tutorial_scene():
-    global clicked
-    all_sprites = pygame.sprite.Group()
-    keyboard_tutorial = pygame.image.load(
-        "./resources/images/menu/tutorial_keyboard.png"
-    )
-    guage_tutorial = pygame.image.load("./resources/images/menu/tutorial_guage.png")
+img_idx = 0
 
+
+def tutorial_scene():
+    global clicked, img_idx
+    all_sprites = pygame.sprite.Group()
+
+    guage_tutorial = pygame.image.load("./resources/images/menu/tutorial_guage.png")
     if clicked == 0:
-        manager.SCREEN.blit(keyboard_tutorial, (0, 0))
+        img_idx += 1
+        manager.SCREEN.blit(TUTORIAL_KEYBOARD[img_idx % 60], (0, 0))
     elif clicked == 1:
         manager.SCREEN.blit(guage_tutorial, (0, 0))
     else:
+        clicked = 0
         return True, "MENU"
 
-    next_button = Button(pygame.image.load("./resources/images/menu/button_next.png"))
-    next_button.update((500, 30))
+    next_button = Button(
+        pygame.image.load("./resources/images/menu/button_next.png"), (500, 10)
+    )
     all_sprites.add(next_button)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

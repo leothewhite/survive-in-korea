@@ -30,6 +30,13 @@ GUAGE_IMAGE = {
     for i in os.listdir(GUAGE_PATH)
     if i != ".DS_Store"
 }
+TUTORIAL_KEYBOARD = []
+
+for i in range(1, 4):
+    for _ in range(20):
+        TUTORIAL_KEYBOARD.append(
+            pygame.image.load(f"./resources/images/menu/tutorial_keyboard{i}.png")
+        )
 
 
 MENU_BACKGROUND = MenuBackground()

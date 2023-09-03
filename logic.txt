@@ -1,9 +1,0 @@
-함수를 쓰는 이유
-개발자가 같은 코드를 열어번 작성하지 않게 하기 위함.
-
-
-목표: 변수 초기화
-
-
-1차로 namedtuple에 한 객체의 속성 (player의 x, y, width, height 등등)
-2차로 싱글턴에 namedtuple 추가

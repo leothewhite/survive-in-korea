@@ -15,11 +15,6 @@ RUNNING = True
 
 now_scene = "MENU"
 
-# manager = ManageVariable()
-
-
-# print(manager.player_x)
-
 
 while RUNNING:
     manager.dt = CLOCK.tick(60)

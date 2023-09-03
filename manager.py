@@ -192,7 +192,6 @@ def move_player():
 
 # 텍스트 나타나고 없어지기
 def text_handler():
-    print(manager.player_x)
     if manager.now_alpha != 0:
         if manager.isText == 1:
             manager.now_alpha += 1 * manager.dt

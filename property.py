@@ -2,7 +2,7 @@ import pygame
 
 
 class Character(pygame.sprite.Sprite):
-    def __init__(self, img):
+    def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
         self.images = []
@@ -19,8 +19,6 @@ class Character(pygame.sprite.Sprite):
         self.images += [
             pygame.image.load("./resources/images/character/player4.png")
         ] * 8
-
-        print(self.images)
 
         self.index = 0
 
@@ -70,7 +68,7 @@ class Place(pygame.sprite.Sprite):
 class Guage:
     def __init__(self):
         self.stress = 20
-        self.grade = 50
+        self.grade = 70
         self.future = 0
         self.health = 100
 
