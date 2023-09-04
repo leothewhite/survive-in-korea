@@ -81,7 +81,11 @@ def game_scene():
     return True, "GAME"
 
 
+select_idx = 0
+
+
 def menu_scene():
+    global select_idx
     obj = {
         "start": Button(
             pygame.image.load("./resources/images/menu/game_start.png"), (200, 200)
@@ -92,7 +96,9 @@ def menu_scene():
         "tutorial": Button(
             pygame.image.load("./resources/images/menu/game_tutorial.png"), (200, 320)
         ),
+        "select": pygame.image.load("./resources/images/menu/select.png"),
     }
+
     title = pygame.image.load("./resources/images/menu/title.png")
     MENU_BACKGROUND.update()
     manager.all_sprites_menu.add(MENU_BACKGROUND)
@@ -100,26 +106,37 @@ def menu_scene():
     manager.all_sprites_menu.add(obj["start"])
     manager.all_sprites_menu.add(obj["exit"])
     manager.all_sprites_menu.add(obj["tutorial"])
-
-    for event in pygame.event.get():
+    event_list = pygame.event.get()
+    print(select_idx)
+    for event in event_list:
         if event.type == pygame.QUIT:
             return False, "END"
 
-        #  * 마우스 버튼 클릭
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            x, y = pygame.mouse.get_pos()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                select_idx -= 1
 
-            if obj["start"].rect.collidepoint(x, y):
-                initialize()
-                return True, "GAME"
-            if obj["exit"].rect.collidepoint(x, y):
-                return False, "END"
-            if obj["tutorial"].rect.collidepoint(x, y):
-                return False, "TUTORIAL"
+                if select_idx < 0:
+                    select_idx = 0
+            if event.key == pygame.K_DOWN:
+                select_idx += 1
+
+                if 2 < select_idx:
+                    select_idx = 2
+
+            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                if select_idx == 0:
+                    return True, "GAME"
+                elif select_idx == 1:
+                    return False, "END"
+                elif select_idx == 2:
+                    return False, "TUTORIAL"
+
+    event_list = []
 
     manager.all_sprites_menu.draw(manager.SCREEN)
     manager.SCREEN.blit(title, (80, 40))
-
+    manager.SCREEN.blit(obj["select"], (196, 196 + 60 * select_idx))
     pygame.display.update()
 
     return True, "MENU"
@@ -127,19 +144,14 @@ def menu_scene():
 
 def over_scene(reason):
     all_sprites = pygame.sprite.Group()
-    return_menu = Button(
-        pygame.image.load("./resources/images/menu/return.png"), (200, 400)
-    )
-    return_menu.update((20, 400))
-    all_sprites.add(return_menu)
+    return_menu = pygame.image.load("./resources/images/menu/return.png")
+    return_menu.blit(manager.SCREEN, (200, 400))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            x, y = event.pos
-
-            if return_menu.rect.collidepoint(x, y):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                 return True, "MENU"
 
     over = {}
@@ -156,14 +168,14 @@ def over_scene(reason):
     return True, "OVER " + reason
 
 
-clicked = 0
-
-
 img_idx = 0
+
+clicked = 0
 
 
 def tutorial_scene():
     global clicked, img_idx
+    print(clicked)
     all_sprites = pygame.sprite.Group()
 
     guage_tutorial = pygame.image.load("./resources/images/menu/tutorial_guage.png")
@@ -176,19 +188,12 @@ def tutorial_scene():
         clicked = 0
         return True, "MENU"
 
-    next_button = Button(
-        pygame.image.load("./resources/images/menu/button_next.png"), (500, 10)
-    )
-    all_sprites.add(next_button)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
 
-        #  * 마우스 버튼 클릭
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            x, y = event.pos
-
-            if next_button.rect.collidepoint(x, y):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                 clicked += 1
 
     all_sprites.draw(manager.SCREEN)

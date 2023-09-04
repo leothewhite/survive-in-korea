@@ -67,7 +67,7 @@ def ending_manager():
     if 1 < manager.month:
         if manager.guage.grade < 30:
             return "grade"
-        elif manager.guage.future < 60:
+        elif manager.guage.future < 50:
             return "future"
         else:
             return "happy"
