@@ -8,7 +8,7 @@ def initialize():
 
     manager.isText = 0
     manager.now_alpha = 0
-    manager.month = 0
+    manager.month = -1
     manager.stress_cnt = 0
     manager.place_now_set = [-1, -1, -1]
     manager.place_idx = 3
@@ -33,7 +33,6 @@ def initialize():
     manager.bg_y = 0
     manager.player = Character()
 
-    # place_image에 이미지들을 스프라이트로 바꿔 places 딕셔네리에 넣음
     for _, v in enumerate(PLACE_IMAGE):
         file_name = v[0]
         file = v[1]
@@ -42,7 +41,6 @@ def initialize():
         )
     manager.place_now = manager.places["a"][0]
 
-    # 보더 이미지를 가지고 borders배열에 스프라이트로 저장
     for i in range(50):
         now_y = i * BORDER_SIZE.y
 

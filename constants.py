@@ -12,19 +12,16 @@ BG_SIZE = Size(640, 480)
 PLACE_PATH = "./resources/images/place/"
 GUAGE_PATH = "./resources/images/guage/"
 
-############### 이미지+스프라이트 로딩 #################
 
 BORDER_IMAGE = pygame.image.load("./resources/images/background/border.png")
 BG_IMAGE = pygame.image.load("./resources/images/background/background.png")
 
-# place_path에서 파일들을 받아와서 이미지로 place_image 리스트에 저장
 PLACE_IMAGE = [
     (i.split(".")[0], pygame.image.load(PLACE_PATH + i))
     for i in os.listdir(PLACE_PATH)
     if i != ".DS_Store"
 ]
 
-# guage_path에서 파일들을 받아와서 이미지로 guage_image 딕셔네리에 저장
 GUAGE_IMAGE = {
     i.split(".")[0]: pygame.image.load(GUAGE_PATH + i)
     for i in os.listdir(GUAGE_PATH)
@@ -40,3 +37,5 @@ for i in range(1, 4):
 
 
 MENU_BACKGROUND = MenuBackground()
+
+SEMESTER = ["1학년 1학기", "1학년 2학기", "2학년 1학기", "2학년 2학기", "3학년 1학기", "3학년 2학기"]

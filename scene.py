@@ -1,81 +1,83 @@
 from property import *
 from manager import *
 from constants import *
-from variable import initialize
 
 manager = ManageVariable()
-
-
-#######################################################
 
 
 manager.player.update((manager.player_x, 240))
 manager.all_sprites.add(manager.player)
 
+isStory = False
+
 
 def game_scene():
-    manager.SCREEN.blit(BG_IMAGE, (0, manager.bg_y))
+    global isStory
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False, "END"
-        event_handler(event)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                isStory = True
+        if isStory:
+            event_handler(event)
+    story = pygame.image.load("./resources/images/background/story.png")
 
-    # * 꾹 누르고 있는 상태 움직임
-    move_player()
-    text_handler()
+    if not isStory:
+        manager.SCREEN.blit(story, (0, 0))
+    if isStory:
+        manager.SCREEN.blit(BG_IMAGE, (0, manager.bg_y))
 
-    if not manager.inPlace:
-        make_gravity()
-        collide_manager()
-        background_manager()
+        move_player()
+        text_handler()
 
-    reason = ending_manager()
-    manager.place_now.draw(manager.SCREEN)
+        if not manager.inPlace:
+            make_gravity()
+            collide_manager()
+            background_manager()
 
-    # 캐릭터가 죽었으면 OVER {reason} 값을 리턴한다
-    if reason:
-        return True, "OVER" + f" {reason}"
+        reason = ending_manager()
+        manager.place_now.draw(manager.SCREEN)
 
-    manager.player_x += manager.to_x
+        if reason:
+            return True, "OVER" + f" {reason}"
 
-    ################ 플레이어 가두기 ##################
-    if not -(200 + 256) <= manager.bg_y <= -200:
-        manager.player_x = pygame.math.clamp(
-            manager.player_x,
-            320,
-            SCREEN_SIZE.x - manager.player.rect.width - BORDER_SIZE.x,
-        )
-    else:
-        manager.player_x = pygame.math.clamp(manager.player_x, 0, 580)
-    ##############################################
+        manager.player_x += manager.to_x
 
-    ########## 화면에 그리기 ###############
-    manager.player.update((manager.player_x, 240))
-    manager.all_sprites.draw(manager.SCREEN)
+        if not -(200 + 256) <= manager.bg_y <= -200:
+            manager.player_x = pygame.math.clamp(
+                manager.player_x,
+                320,
+                SCREEN_SIZE.x - manager.player.rect.width - BORDER_SIZE.x,
+            )
+        else:
+            manager.player_x = pygame.math.clamp(manager.player_x, 0, 580)
 
-    if manager.title != -1:
-        manager.SCREEN.blit(manager.title, (40, 40))
-    ####################################
+        manager.player.update((manager.player_x, 240))
+        manager.all_sprites.draw(manager.SCREEN)
 
-    ################## 게이지 그리기 ##################
-    guages = [
-        manager.guage.stress,
-        manager.guage.health,
-        manager.guage.grade,
-        manager.guage.future,
-    ]
-    guage_name = ["stress", "health", "grade", "future"]
+        if manager.title != -1:
+            manager.SCREEN.blit(manager.title, (40, 40))
 
-    for i in range(4):
-        guages[i] = pygame.math.clamp(guages[i], 0, 100)
-        for j in range(20):
-            if j < guages[i] // 5:
-                manager.SCREEN.blit(
-                    GUAGE_IMAGE[guage_name[i]], (527 + (5 * j), 322 + (40 * i))
-                )
-        manager.SCREEN.blit(GUAGE_IMAGE["frame_" + guage_name[i]], (525, 320 + 40 * i))
-    #################################################
-    manager.to_x = 0
+        guages = [
+            manager.guage.stress,
+            manager.guage.health,
+            manager.guage.grade,
+            manager.guage.future,
+        ]
+        guage_name = ["stress", "health", "grade", "future"]
+
+        for i in range(4):
+            guages[i] = pygame.math.clamp(guages[i], 0, 100)
+            for j in range(20):
+                if j < guages[i] // 5:
+                    manager.SCREEN.blit(
+                        GUAGE_IMAGE[guage_name[i]], (527 + (5 * j), 322 + (40 * i))
+                    )
+            manager.SCREEN.blit(
+                GUAGE_IMAGE["frame_" + guage_name[i]], (525, 320 + 40 * i)
+            )
+        manager.to_x = 0
     pygame.display.update()
 
     return True, "GAME"
@@ -86,26 +88,15 @@ select_idx = 0
 
 def menu_scene():
     global select_idx
-    obj = {
-        "start": Button(
-            pygame.image.load("./resources/images/menu/game_start.png"), (200, 200)
-        ),
-        "exit": Button(
-            pygame.image.load("./resources/images/menu/game_exit.png"), (200, 260)
-        ),
-        "tutorial": Button(
-            pygame.image.load("./resources/images/menu/game_tutorial.png"), (200, 320)
-        ),
-        "select": pygame.image.load("./resources/images/menu/select.png"),
-    }
+    start_button = pygame.image.load("./resources/images/menu/game_start.png")
+    exit_button = pygame.image.load("./resources/images/menu/game_exit.png")
+    tutorial_button = pygame.image.load("./resources/images/menu/game_tutorial.png")
+    select_frame = pygame.image.load("./resources/images/menu/select.png")
 
     title = pygame.image.load("./resources/images/menu/title.png")
     MENU_BACKGROUND.update()
     manager.all_sprites_menu.add(MENU_BACKGROUND)
 
-    manager.all_sprites_menu.add(obj["start"])
-    manager.all_sprites_menu.add(obj["exit"])
-    manager.all_sprites_menu.add(obj["tutorial"])
     event_list = pygame.event.get()
     print(select_idx)
     for event in event_list:
@@ -136,7 +127,10 @@ def menu_scene():
 
     manager.all_sprites_menu.draw(manager.SCREEN)
     manager.SCREEN.blit(title, (80, 40))
-    manager.SCREEN.blit(obj["select"], (196, 196 + 60 * select_idx))
+    manager.SCREEN.blit(start_button, (200, 200 + 60 * 0))
+    manager.SCREEN.blit(exit_button, (200, 200 + 60 * 1))
+    manager.SCREEN.blit(tutorial_button, (200, 200 + 60 * 2))
+    manager.SCREEN.blit(select_frame, (196, 196 + 60 * select_idx))
     pygame.display.update()
 
     return True, "MENU"

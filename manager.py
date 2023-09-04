@@ -75,22 +75,17 @@ def ending_manager():
     return False
 
 
-# * 입력
 def event_handler(event):
-    # 장소에서 기다림을 끝낼 떄
     if event.type == manager.place_timer:
         manager.inPlace = False
 
-        # 플레이어 움직임
         manager.player_x = 480
         manager.bg_y = -400
         manager.player.update((manager.player_x, SCREEN_SIZE.y / 2))
 
-        # 안보이게 했던 플레이러를 다시 나타냄
         manager.all_sprites.add(manager.player)
         manager.all_sprites.draw(manager.SCREEN)
 
-        # 타이머 취소
         pygame.time.set_timer(manager.place_timer, 0)
 
     if not manager.inPlace:
@@ -110,12 +105,10 @@ def event_handler(event):
                 manager.down[1] = False
 
 
-# * a 스프라이트가 b 스프라이트 리스트에 부딪혔는가
 def is_collided(a, b):
     return pygame.Rect.collidelist(a, b)
 
 
-# * 플레이어와 (어떤)장소가 충돌했는가를 리턴
 def list_collided(player, place_type):
     col = is_collided(player.rect, manager.places[place_type]) + 1
     if col:
@@ -143,16 +136,14 @@ def guage_manager(place_type, col_place):
         manager.guage.future += 10
 
 
-# * 장소와의 충돌처리, 그로인한 게이지 변화 (횟수로 인한 변화도 포함)
 def collide_manager():
     for key in manager.places:
         col_place = list_collided(manager.player, key)
 
-        # 장소 입장
         if col_place:
-            manager.all_sprites.remove(manager.player)  # 플레이어를 안보이게
-            manager.down = [False, False]  # 키가 눌린 상태인지
-            pygame.time.set_timer(manager.place_timer, 2000)  # 언제 장소에서 나올지 타이머
+            manager.all_sprites.remove(manager.player)
+            manager.down = [False, False]
+            pygame.time.set_timer(manager.place_timer, 2000)
 
             manager.bg_y = -400
             manager.inPlace = True
@@ -162,17 +153,13 @@ def collide_manager():
             guage_manager(key, col_place)
 
 
-# * 게이지 값에 따른 중력 값 설정
 def make_gravity():
-    # 진로탐색/스트레스 형식이면 끌림
     if manager.place_now.type == "a" or manager.place_now.type == "c":
         manager.gravity = manager.guage.stress / 10
 
-    # 독서실은 거부함
     elif manager.place_now.type == "b":
         manager.gravity = -(manager.guage.stress / 10)
 
-    # 중력 적용
     if (
         manager.place_now.rect.y - manager.player.rect.height
         <= manager.player.rect.y
@@ -181,7 +168,6 @@ def make_gravity():
         manager.to_x -= manager.gravity
 
 
-# 키를 누르는 중에 플레이어를 움직임
 def move_player():
     if not manager.inPlace:
         if manager.down[0]:
@@ -190,7 +176,6 @@ def move_player():
             manager.to_x += manager.SPEED * manager.dt
 
 
-# 텍스트 나타나고 없어지기
 def text_handler():
     if manager.now_alpha != 0:
         if manager.isText == 1:
@@ -205,5 +190,7 @@ def text_handler():
                 manager.isText = 0
 
     if manager.isText == 1 or manager.isText == 2:
-        manager.title = FONT.render(f"{manager.month} 월", True, pygame.Color(0, 0, 0))
+        manager.title = FONT.render(
+            SEMESTER[manager.month], True, pygame.Color(0, 0, 0)
+        )
         manager.title.set_alpha(manager.now_alpha)
