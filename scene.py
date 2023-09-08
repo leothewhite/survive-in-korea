@@ -48,7 +48,7 @@ def game_scene():
             manager.player_x = pygame.math.clamp(
                 manager.player_x,
                 320,
-                SCREEN_SIZE.x - manager.player.rect.width - BORDER_SIZE.x,
+                SCREEN_SIZE[0] - manager.player.rect.width - BORDER_SIZE[0],
             )
         else:
             manager.player_x = pygame.math.clamp(manager.player_x, 0, 580)

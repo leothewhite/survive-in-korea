@@ -1,17 +1,18 @@
 import pygame
-from property import Size, MenuBackground
+from property import MenuBackground
 import os
+from property import *
 
 pygame.font.init()
 
 
 FONT = pygame.font.Font("./resources/fonts/NeoDunggeunmoPro-Regular.ttf", 30)
-BORDER_SIZE = Size(16, 32)
-SCREEN_SIZE = Size(640, 480)
-BG_SIZE = Size(640, 480)
+BORDER_SIZE = (16, 32)
+SCREEN_SIZE = (640, 480)
+BG_SIZE = (640, 480)
 PLACE_PATH = "./resources/images/place/"
 GUAGE_PATH = "./resources/images/guage/"
-
+SPEED = 0.2
 
 BORDER_IMAGE = pygame.image.load("./resources/images/background/border.png")
 BG_IMAGE = pygame.image.load("./resources/images/background/background.png")
@@ -27,6 +28,16 @@ GUAGE_IMAGE = {
     for i in os.listdir(GUAGE_PATH)
     if i != ".DS_Store"
 }
+
+PLACES = {"a": [], "b": [], "c": []}
+
+for _, v in enumerate(PLACE_IMAGE):
+    file_name = v[0]
+    file = v[1]
+    PLACES[v[0][0]].append(
+        Place(file, file_name[2:], (0, SCREEN_SIZE[1]), file_name[0])
+    )
+
 TUTORIAL_KEYBOARD = []
 
 for i in range(1, 4):

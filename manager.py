@@ -8,53 +8,41 @@ pygame.font.init()
 manager = ManageVariable()
 
 
-# 배경(배경+보더) 움직이기
 def background_manager():
     manager.bg_y -= 0.15 * manager.dt
 
-    # idx는 보더블럭을 업데이트 하기 위한 것
     for idx in range(50):
-        # 15*32 = 480, 23*32 = 736 (480 + 256)
         if 15 <= idx < 23:
             if 2 < manager.place_idx:
-                # 과로
                 if 3 == manager.now_place_cnt:
                     manager.guage.health -= 10
 
-                # 다음 place set을 고름
                 for i in range(3):
-                    manager.place_now_set[i] = random.choice(
-                        manager.places[chr(i + 97)]
-                    )
+                    manager.place_now_set[i] = random.choice(PLACES[chr(i + 97)])
                 random.shuffle(manager.place_now_set)
 
                 manager.place_idx = 0
                 manager.now_place_cnt = 0
 
-                # 글자 관련
                 manager.month += 1
                 manager.isText = 1
                 manager.now_alpha += manager.dt
 
-            # 오른쪽 보도블럭만 나타냄
             for t in range(2, 4):
                 now = manager.borders[t][idx]
                 now.update((now.rect.x, manager.bg_y + idx * 32))
 
-            # 장소 움직임
             manager.place_now = manager.place_now_set[manager.place_idx]
-            manager.place_now.update((0, manager.bg_y + SCREEN_SIZE.y))
+            manager.place_now.update((0, manager.bg_y + SCREEN_SIZE[1]))
 
         else:
             for t in range(4):
                 now = manager.borders[t][idx]
                 now.update((now.rect.x, manager.bg_y + idx * 32))
 
-    # 640(그림 한 칸의 단위) + 256(건물의 높이)
     if manager.bg_y <= -(640 + 256):
         manager.bg_y = 0
 
-        # 장소를 바꿔줌
         manager.place_idx += 1
 
 
@@ -81,7 +69,7 @@ def event_handler(event):
 
         manager.player_x = 480
         manager.bg_y = -400
-        manager.player.update((manager.player_x, SCREEN_SIZE.y / 2))
+        manager.player.update((manager.player_x, SCREEN_SIZE[1] / 2))
 
         manager.all_sprites.add(manager.player)
         manager.all_sprites.draw(manager.SCREEN)
@@ -91,11 +79,11 @@ def event_handler(event):
     if not manager.inPlace:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                manager.to_x -= manager.SPEED * 3 * manager.dt
+                manager.to_x -= SPEED * 3 * manager.dt
                 manager.down[0] = True
 
             if event.key == pygame.K_RIGHT:
-                manager.to_x += manager.SPEED * 3 * manager.dt
+                manager.to_x += SPEED * 3 * manager.dt
                 manager.down[1] = True
 
         if event.type == pygame.KEYUP:
@@ -110,9 +98,9 @@ def is_collided(a, b):
 
 
 def list_collided(player, place_type):
-    col = is_collided(player.rect, manager.places[place_type]) + 1
+    col = is_collided(player.rect, PLACES[place_type]) + 1
     if col:
-        return manager.places[place_type][col - 1].name
+        return PLACES[place_type][col - 1].name
     else:
         return False
 
@@ -137,7 +125,7 @@ def guage_manager(place_type, col_place):
 
 
 def collide_manager():
-    for key in manager.places:
+    for key in PLACES:
         col_place = list_collided(manager.player, key)
 
         if col_place:
@@ -171,9 +159,9 @@ def make_gravity():
 def move_player():
     if not manager.inPlace:
         if manager.down[0]:
-            manager.to_x -= manager.SPEED * manager.dt
+            manager.to_x -= SPEED * manager.dt
         if manager.down[1]:
-            manager.to_x += manager.SPEED * manager.dt
+            manager.to_x += SPEED * manager.dt
 
 
 def text_handler():

@@ -1,5 +1,4 @@
 import pygame
-import time
 from variable import initialize
 
 initialize()

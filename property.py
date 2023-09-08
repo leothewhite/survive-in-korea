@@ -73,7 +73,6 @@ class Guage:
         self.health = 100
 
 
-# * 전역 변수를 관리하기 윈한 싱글톤 클래스
 class ManageVariable:
     _instance = None
 
@@ -96,12 +95,6 @@ class Button(pygame.sprite.Sprite):
     def update(self, pos):
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
-
-
-class Size:
-    def __init__(self, width, height):
-        self.x = width
-        self.y = height
 
 
 class MenuBackground(pygame.sprite.Sprite):
