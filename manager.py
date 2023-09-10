@@ -7,6 +7,7 @@ pygame.font.init()
 
 manager = ManageVariable()
 
+# manager.py
 
 def background_manager():
     manager.bg_y -= 0.15 * manager.dt  # 배경 사진의 y 좌표
@@ -14,38 +15,37 @@ def background_manager():
     for idx in range(50):
         # 장소 있는곳 뚫어놓기
         if 15 <= idx < 23:
-            if 2 < manager.place_idx:  # 만약 한 place set이 끝났다면
-                # 과로 시 건강 - 10
-                if 3 == manager.now_place_cnt:
-                    manager.guage.health -= 10
-
-                # 새로 place set를 뽑아줌
-                for i in range(3):
-                    manager.place_now_set[i] = random.choice(PLACES[chr(i + 97)])
-                random.shuffle(manager.place_now_set)
-
-                manager.place_idx = 0
-                manager.now_place_cnt = 0
-
-                manager.month += 1
-
-                # 한 학기가 지난 것이므로 글자 표시 시켜줌
-                manager.isText = 1
-                manager.now_alpha += manager.dt
-
-            # 보더 움직이기
             for t in range(2, 4):
                 now = manager.borders[t][idx]
                 now.update((now.rect.x, manager.bg_y + idx * 32))
 
-            manager.place_now = manager.place_now_set[manager.place_idx]
-            manager.place_now.update((0, manager.bg_y + SCREEN_SIZE[1]))
 
         else:
             for t in range(4):
                 now = manager.borders[t][idx]
                 now.update((now.rect.x, manager.bg_y + idx * 32))
 
+        if 2 < manager.place_idx:  # 만약 한 place set이 끝났다면
+            # 과로 시 건강 - 10
+            if 3 == manager.now_place_cnt:
+                manager.guage.health -= 10
+
+            # 새로 place set를 뽑아줌
+            for i in range(3):
+                manager.place_now_set[i] = random.choice(PLACES[chr(i + 97)])
+            random.shuffle(manager.place_now_set)
+
+            manager.place_idx = 0
+            manager.now_place_cnt = 0
+
+            manager.month += 1
+
+            # 한 학기가 지난 것이므로 글자 표시 시켜줌
+            manager.isText = 1
+            manager.now_alpha += manager.dt
+
+        manager.place_now = manager.place_now_set[manager.place_idx]
+        manager.place_now.update((0, manager.bg_y + SCREEN_SIZE[1]))
     # 배경 끝까지 가면 처음부터 시작
     if manager.bg_y <= -(640 + 256):
         manager.bg_y = 0
@@ -99,14 +99,17 @@ def event_handler(event):
             if event.key == pygame.K_RIGHT:
                 manager.down[1] = False
 
+# manager.py
+
 def guage_manager(place_type, col_place):
     if place_type == "a": # 스트레스 해소 장소라면
+        manager.stress_cnt += 1
         manager.guage.stress -= 5
         if col_place == "alley":
             manager.guage.health -= 5
         if col_place == "basketball":
             manager.guage.health += 5
-        if 5 <= manager.stress_cnt:
+        if 3 <= manager.stress_cnt:
             manager.guage.grade -= 5
             manager.stress_cnt = 0
 
