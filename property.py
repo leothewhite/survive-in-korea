@@ -7,6 +7,7 @@ class Character(pygame.sprite.Sprite):
 
         self.images = []
 
+        # 속도 조절 위해 한 프레임당 8번씩 들어감
         self.images += [
             pygame.image.load("./resources/images/character/player1.png")
         ] * 8
@@ -26,6 +27,7 @@ class Character(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
     def update(self, pos):
+        # self.index를 1씩 증가 시키며, 스프라이트의 이미지를 현재 인덱스의 이미지로 바꿔준다
         self.index += 1
 
         if 32 <= self.index:
@@ -73,6 +75,7 @@ class Guage:
         self.health = 100
 
 
+# 싱글턴 클래스
 class ManageVariable:
     _instance = None
 
@@ -85,22 +88,11 @@ class ManageVariable:
         pass
 
 
-class Button(pygame.sprite.Sprite):
-    def __init__(self, img, pos):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = img
-        self.rect = self.image.get_rect()
-        self.rect.topleft = pos
-
-    def update(self, pos):
-        self.rect = self.image.get_rect()
-        self.rect.topleft = pos
-
-
 class MenuBackground(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.backgrounds = []
+        # 속도 조절 위해서 한 프레임당 60번씩 들어감
         for i in range(1, 13):
             for _ in range(60):
                 self.backgrounds.append(
